@@ -35,7 +35,7 @@ public class ProjectBookstore {
                     //Validate and save option typed
                     menu.option(input.nextLine());
                 //While Menu Option is not an error or is not option Back
-                }while(menu.getOption() == -1 || menu.getOption() < 5);
+                }while(menu.getOption() == -1 || menu.getOption() < 6);
         //While Menu Option is not an error or is not option Exit
         }while(menu.getCategory() == -1 || menu.getCategory() < 7);       
     }

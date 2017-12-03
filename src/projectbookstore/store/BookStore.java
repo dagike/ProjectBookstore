@@ -6,257 +6,149 @@
  *
  */
 
-//Current package
+// Current package
 package projectbookstore.store;
 
-//Import java libraries and other libraries
-import projectbookstore.store.products.*;   //Product Classes
-import java.util.List;  //List object
-import java.util.ArrayList; //ArrayList object
-import java.util.Scanner;   //Scanner object
+// Import java libraries and other libraries
+import projectbookstore.store.products.*;   // Product Classes
+import projectbookstore.store.db.*;         // DB Classes
+import java.util.List;                      // List object
+import java.util.ArrayList;                 // ArrayList object
+import java.util.Scanner;                   // Scanner object
 
 public class BookStore {
-    //Attributes
-    private final List<Album> albums;
+    // Attributes
+    private final AlbumDB albumList;
     private final List<Book> books;
     private final List<GameConsole> gameConsoles;
     private final List<GiftCard> giftCards;
     private final List<Movie> movies;
     private final List<VideoGame> videoGames;
     
-    //Methods
+    // Methods
     
-    //Constructor
+    // Constructor
     public BookStore(){
-        albums = new ArrayList();
+        albumList = new AlbumDB();
         books = new ArrayList();
         gameConsoles = new ArrayList();
         giftCards = new ArrayList();
         movies = new ArrayList();
         videoGames = new ArrayList();
     }
-    
-    //Create a new object Album to add to the list albums with user inputs
-    public void addAlbum(){
-        //new Album object
+       
+    public Album askAlbum(String title){
+        // new Album object
         Album album = new Album();
-        //Scanner object for user input
+        int intDate[] = {0, 0, 0};
+        // Scanner object for user input
         Scanner input = new Scanner(System.in);
-                
-        //Display message for the object album fields
-        System.out.print("Title: ");
-        //Search if title already exist in another object in the albums list
-        album.setTitle(input.nextLine());
-        if(searchAlbum(album.getTitle()))
-            System.out.println("Title already exists"); //Title must be unique in each album
-        else{
-            //Ask for all the other fields
-            System.out.print("Artist: ");
-            album.setArtist(input.nextLine());
-            System.out.print("Genre: ");
-            album.setGenre(input.nextLine());
-            System.out.print("Language: ");
-            album.setLanguage(input.nextLine());
-            //Ask for the Release Date until is a valid date
-            while(true){
-                System.out.print("Release Date: ");
-                //album.setReleaseDate(input.nextLine());
-                //Validate if releaseDate is in the format yyyy-mm-dd
-                //if(checkDate(album.getReleaseDate()))   
-                    break;
+        // Ask for all the other fields
+        album.setTitle(title);
+        System.out.print("Artist: ");
+        album.setArtist(input.nextLine());
+        System.out.print("Genre: ");
+        album.setGenre(input.nextLine());
+        System.out.print("Language: ");
+        album.setLanguage(input.nextLine());
+        // Ask for the Release Date until is a valid date
+        while(true){
+            System.out.print("Release Date: ");
+            String date = input.nextLine();
+            if(checkDate(date, intDate)){
+                album.setReleaseDate(intDate[0], intDate[1], intDate[2]);
+                break;
             }
-            //Validate if duration is just a number without decimals
-            while(true){
-                try{
-                    System.out.print("Duration: ");
-                    album.setDuration(input.nextInt());
-                    break;
-                }catch(Exception e){
-                    //Display error message
-                    System.out.println("Only numbers without decimal allowed, try again");
-                    input.next();
-                }
-            }
-            //Validate if price is just a number
-            while(true){
-                try{
-                    System.out.print("Price: ");
-                    album.setPrice(input.nextDouble());
-                    break;
-                }catch(Exception e){
-                    //Display error message
-                    System.out.println("Only numbers allowed, try again");
-                    input.next();
-                }
-            }
-            //Add the object with all the inputs to the list albums
-            albums.add(album);
-            //Display success message
-            System.out.println("New Album Added");
         }
-        
-        System.out.println("Please press [Enter] to continue");
-        input.nextLine();
+        // Validate if duration is just a number without decimals
+        while(true){
+            try{
+                System.out.print("Duration: ");
+                album.setDuration(input.nextInt());
+                break;
+            }catch(Exception e){
+                //Display error message
+                System.out.println("Only numbers without decimal allowed, try again");
+                input.next();
+            }
+        }
+        // Validate if price is just a number
+        while(true){
+            try{
+                System.out.print("Price: ");
+                album.setPrice(input.nextDouble());
+                break;
+            }catch(Exception e){
+                //Display error message
+                System.out.println("Only numbers allowed, try again");
+                input.next();
+            }
+        }
+        return album;
     }
     
-    //Delete an album from the list albums by searching the title 
+    // Add an album to albumList 
+    public void addAlbum(){
+        String title = askTitle();                      // Ask for a title to user
+        if(albumList.findAlbumByTitle(title) >= 0)      // If title already exist in albumList
+            System.out.println("Title already exists"); // Title must be unique
+        else
+            // Display message if the object was added or list is Full
+            System.out.println(albumList.addAlbum(askAlbum(title)) ? "New Album Added" : "Album List Full");
+        waitUser();        
+    }
+    
+    // Delete an album from the list albums by searching the title 
     public void deleteAlbum(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!albums.isEmpty()){
-            int index = 0;  //Used for the loop to get object by object in the list
-            String title;   //Search string input by user
-            boolean found = false;  //Check if album was found
-            //Display message to ask title to the user they want to delete
-            System.out.print("Which album do you want to delete?\nEnter title: ");
-            title = input.nextLine();   //User input title
-            
-            //Search for the title input by the user
-            while(index < albums.size() && !found){
-                //Compare the title with the album ojbect title
-                if(albums.get(index).getTitle().compareToIgnoreCase(title) == 0){
-                    found = true;   //Title found in the list
-                    albums.get(index).displayAlbum();   //Display album with the title
-                    System.out.println("Are you sure? (y/n)");  //User decide to delete
-                    //Delete if the user say "y"
-                    if(input.nextLine().compareToIgnoreCase("y") == 0){
-                        albums.remove(index);   //Remove album from list
-                        System.out.println("Album Deleted");    //Display message success
-                    }
-                }
-                index++;    //increase index for next object in list
-            }
-            if(!found)
-                System.out.println("Album not found"); //Display Album not found in the list
-        }
-        else    //List has no object
-            System.out.println("List of Albums is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();
+        String title = askTitle();                      // Ask for a title to user
+        // Display message if the object was deleted or title was not found
+        System.out.println(albumList.deleteAlbum(title) ? "Album Deleted" : "Title not found");
+        waitUser();
     }
     
-    //Delete an album from the list albums by searching the title
+    // Delete an album from the list albums by searching the title
     public void modifyAlbum(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!albums.isEmpty()){
-            int index = 0;  //Used for the loop to get object by object in the list
-            String title;   //Search string input by user
-            boolean found = false;  //Check if album was found
-            //Ask for the title of the album to modify in the albums list
-            System.out.print("Which album you want to modify?\n Enter title: ");
-            title = input.nextLine();
-            //Search for the title until is found
-            while(index < albums.size() && !found){
-                if(albums.get(index).getTitle().compareToIgnoreCase(title) == 0){
-                    found = true;
-                    albums.get(index).displayAlbum();   //Display found album
-                    System.out.println("Are you sure? (y/n)");  //Ask the user to confirm to modify found album
-                    //Ask again for the fields if the user say [y]es
-                    if(input.nextLine().compareToIgnoreCase("y") == 0){
-                        System.out.print("Artist: ");
-                        albums.get(index).setArtist(input.nextLine());
-                        System.out.print("Genre: ");
-                        albums.get(index).setGenre(input.nextLine());
-                        System.out.print("Language: ");
-                        albums.get(index).setLanguage(input.nextLine());
-                        //Ask for the releaseDate until is a valid date
-                        while(true){
-                            System.out.print("Release Date: ");
-                            albums.get(index).setReleaseDate(input.nextLine());
-                            //Validate if releaseDate is in the format yyyy-mm-dd
-                            if(checkDate(albums.get(index).getReleaseDate()))   
-                                break;
-                        }
-                        //Validate if duration is just a number without decimals
-                        while(true){
-                            try{
-                                System.out.print("Duration: ");
-                                albums.get(index).setDuration(input.nextInt());
-                                break;
-                            }catch(Exception e){
-                                //Display an error message
-                                System.out.println("Only numbers without decimal allowed, try again");
-                                input.next();
-                            }
-                        }
-                        //Validate if price is just a number 
-                        while(true){
-                            try{
-                                System.out.print("Price: ");
-                                albums.get(index).setPrice(input.nextDouble());
-                                break;
-                            }catch(Exception e){
-                                //Display an error message
-                                System.out.println("Only numbers allowed, try again");
-                                input.next();
-                            }
-                        }
-                        //Reset input scanner
-                        input.nextLine();
-                        //Display success message
-                        System.out.println("Album Modified");
-                    }
-                }
-                index++;
-            }
-            if(!found)
-                System.out.println("Album not found");  //Display Album not in the list
-        }
-        else    //List has no object
-            System.out.println("List of Albums is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();  
+        String title = askTitle();                      // Ask for a title to user
+        if(albumList.findAlbumByTitle(title) < 0)       // If title doesn't exist in albumList
+            System.out.println("Title not found");      
+        else
+            // Display message if the object was added or there was an error
+            System.out.println(albumList.addAlbum(askAlbum(title)) ? "Album Changed" : "Error updating");
+        waitUser();
     }
     
-    //Display an album or all the objects from the list albums
+    // Display album with search criteria Artist or Genre
+    public void searchAlbum(){
+        Scanner input = new Scanner(System.in);
+        String searchOption, searchCriteria;
+        if(albumList.getCount() > 0)
+            while(true){
+                System.out.println("Choose criteria searching\n1. Artist\n2. Genre");
+                searchOption = input.nextLine();
+                if(searchOption.compareTo("1") == 0){
+                    System.out.print("Enter Artist: ");
+                    searchCriteria = input.nextLine();
+                    if(!albumList.displayAlbumByArtist(searchCriteria))
+                        System.out.println("Artist not found");
+                    break;
+                } else if(searchOption.compareTo("2") == 0){
+                    System.out.print("Enter Genre: ");
+                    searchCriteria = input.nextLine();
+                    if(!albumList.displayAlbumByGenre(searchCriteria))
+                        System.out.println("Genre not found");
+                    break;
+                } else 
+                    System.out.println("Invalid option");
+            }
+        else
+            System.out.println("List is empty");
+        waitUser();
+    }
+    
+    // Display an album or all the objects from the list albums
     public void displayAlbum(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!albums.isEmpty()){
-            String title;
-            boolean found = false;
-            //Display message to ask display one album with a title seach or all albums in the list album
-            System.out.println("Type title to search or press [Enter] for all albums");
-            title = input.nextLine();
-            //Check the user choosen option
-            if(title.compareTo("") != 0){
-                //Search title in object by object in the album list
-                for(Album album: albums){
-                    //Compare user input title and the title in the current object
-                    if(album.getTitle().compareToIgnoreCase(title) == 0){
-                        found = true;   //Album found
-                        album.displayAlbum();   //Display Album found
-                    }
-                }
-                if(!found)
-                    System.out.println("Album not found");  //Display Album not in the list
-            }
-            else                    //Second option
-                //Display all album object in the list
-                albums.forEach((album) -> {
-                    album.displayAlbum();
-                });
-        }
-        else    //List has no object
-            System.out.println("List of Albums is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();
-    }
-    
-    //Search by title if it exist in the albums list 
-    public boolean searchAlbum(String title){
-        return albums.stream().anyMatch((album) 
-                -> (album.getTitle().compareToIgnoreCase(title) == 0));
+        albumList.displayAlbumList();
+        waitUser();
     }
     
     //Create a new object Book to add to the list books with user inputs
@@ -1378,6 +1270,20 @@ public class BookStore {
                 -> (videoGame.getTitle().compareToIgnoreCase(name) == 0));
     }
     
+    
+    
+    // Wait for user enter
+    public void waitUser(){        
+        System.out.println("Please press [Enter] to continue");
+        new Scanner(System.in).nextLine();
+    }
+    
+    // Ask for title
+    public String askTitle(){
+        System.out.print("Title: ");
+        return new Scanner(System.in).nextLine();
+    }
+    
     //Check if the date is a valid format yyyy-mm-dd
     public boolean checkDate(String date){
         if(date.length() != 10){
@@ -1387,12 +1293,34 @@ public class BookStore {
         //Check for format and check for months with 29, 30 or 31 days
         }else if(!date.matches("\\d{4}-"
                 + "(((01|03|05|07|08|10|12)-(0[1-9]|1[0-9]|2[0-9]|3[0-1]))|"  //Months with up to 31 days
-                + "((04|06|09|11)-(0[1-9]|1[0-9]|2[0-9]|30))|"   //Months Valid only up to 30 days
-                + "((02)-(0[1-9]|1[0-9]|2[0-9])))" + "$")){      //February up to 29 days
+                + "((04|06|09|11)-(0[1-9]|1[0-9]|2[0-9]|30))|"                //Months Valid only up to 30 days
+                + "((02)-(0[1-9]|1[0-9]|2[0-9])))" + "$")){                   //February up to 29 days
             //Display error message invalid format or wrong number of days
             System.out.println("Check format yyyy-mm-dd and valid month-day number");
             return false;
         }else
             return true;
+    }
+    
+    //Check if the date is a valid format yyyy-mm-dd and assign in an array of int
+    public boolean checkDate(String date, int intDate[]){
+        if(date.length() != 10){
+            //Display error message string date has to have 10 characters
+            System.out.println("Must be 10 characters");
+            return false;
+        //Check for format and check for months with 29, 30 or 31 days
+        }else if(!date.matches("\\d{4}-"
+                + "(((01|03|05|07|08|10|12)-(0[1-9]|1[0-9]|2[0-9]|3[0-1]))|"  //Months with up to 31 days
+                + "((04|06|09|11)-(0[1-9]|1[0-9]|2[0-9]|30))|"                //Months Valid only up to 30 days
+                + "((02)-(0[1-9]|1[0-9]|2[0-9])))" + "$")){                   //February up to 29 days
+            //Display error message invalid format or wrong number of days
+            System.out.println("Check format yyyy-mm-dd and valid month-day number");
+            return false;
+        }else{
+            intDate[0] = Integer.parseInt(date.substring(0, 4));    // Day
+            intDate[1] = Integer.parseInt(date.substring(5, 7));    // Month
+            intDate[2] = Integer.parseInt(date.substring(8, 10));   // Year
+            return true;
+        }
     }
 }
