@@ -6,18 +6,18 @@
  *
  */
 
-//Current package
+// Current package
 package projectbookstore.store.products;
 
 public class Book {
-    //Attributes
+    // Attributes
     private String title, author, genre, publisher, language, ISBN;
     private int pages, publicationYear;
     private double price;
 
-    //Methods
+    // Methods
     
-    //Constructor
+    // Constructor
     public Book() {
         title = "";
         author = "";
@@ -30,97 +30,100 @@ public class Book {
         price = 0.0;
     }
 
-    //Accesor for title
+    // Accesor for title
     public String getTitle() {
         return title;
     }
 
-    //Mutator for title
+    // Mutator for title
     public void setTitle(String title) {
         this.title = title;
     }
 
-    //Accesor for author
+    // Accesor for author
     public String getAuthor() {
         return author;
     }
 
-    //Mutator for author
+    // Mutator for author
     public void setAuthor(String author) {
         this.author = author;
     }
 
-    //Accesor for genre
+    // Accesor for genre
     public String getGenre() {
         return genre;
     }
 
-    //Mutator for genre
+    // Mutator for genre
     public void setGenre(String genre) {
         this.genre = genre;
     }
 
-    //Accesor for publisher
+    // Accesor for publisher
     public String getPublisher() {
         return publisher;
     }
 
-    //Mutator for publisher
+    // Mutator for publisher
     public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
 
-    //Accesor for publicationDate
+    // Accesor for publicationDate
     public int getPublicationYear() {
         return publicationYear;
     }
 
-    //Mutator for publicationDate
+    // Mutator for publicationDate
     public void setPublicationYear(int publicationYear) {
-        this.publicationYear = publicationYear;
+        if(publicationYear > 0)
+            this.publicationYear = publicationYear;
     }
 
-    //Accesor for language
+    // Accesor for language
     public String getLanguage() {
         return language;
     }
 
-    //Mutator for language
+    // Mutator for language
     public void setLanguage(String language) {
         this.language = language;
     }
 
-    //Accesor for ISBN
+    // Accesor for ISBN
     public String getISBN() {
         return ISBN;
     }
 
-    //Mutator for ISBN
+    // Mutator for ISBN
     public void setISBN(String ISBN) {
         this.ISBN = ISBN;
     }
 
-    //Accesor for pages
+    // Accesor for pages
     public int getPages() {
         return pages;
     }
 
-    //Mutator for pages
+    // Mutator for pages
     public void setPages(int pages) {
-        this.pages = pages;
+        if(pages > 0)
+            this.pages = pages;
     }
 
-    //Accesor for price
+    // Accesor for price
     public double getPrice() {
         return price;
     }
 
-    //Mutator for price
+    // Mutator for price
     public void setPrice(double price) {
-        this.price = price;
+        if(price >= 0)
+            this.price = price;
     }
     
-    //Display all the fields of the object
+    // Display all the fields of the object
     public void displayBook(){
         System.out.println( "Title: " + title +
                             "\nAuthor: " + author +

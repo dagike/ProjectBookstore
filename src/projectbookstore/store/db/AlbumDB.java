@@ -1,7 +1,7 @@
 /*
  * Project: Book Store Management 
  * Course: Java Programming 1 ITC-5102-0NA
- * Class: ALbumDB
+ * Class: AlbumDB
  * Package: projectbookstore.store.db 
  *
  */
@@ -44,12 +44,12 @@ public class AlbumDB {
     
     // Find Album By Title
     public int findAlbumByTitle(String title){
-        int index = -1;         // Set index to -1
+        int index = -1;                     // Set index to -1
         for(int i = 0; i < count; i++){     // Look in current Album in array albums
             if(albums[i].getTitle().compareToIgnoreCase(title) == 0) // If title found
-                return i;       // Return i where title was found
+                return i;                   // Return i where title was found
         }
-        return index;           // Return index if title wasn't found
+        return index;                       // Return index if title wasn't found
     }
     
     // Display Album By Artist search criteria
@@ -57,7 +57,7 @@ public class AlbumDB {
         boolean displayed = false;              // Set displayed to false
         if(count > 0){
             for(int i = 0; i < count; i++){     // Look in albums arrays
-                if(albums[i].getGenre().compareToIgnoreCase(artist) == 0) { // If artist found print album
+                if(albums[i].getArtist().compareToIgnoreCase(artist) == 0) { // If artist found print album
                     albums[i].displayAlbum();   // Display album with artist found
                     displayed = true;           // Set displayed to true
                 }
@@ -88,7 +88,7 @@ public class AlbumDB {
             for(int i = index; i < count - 1; i++)  // From the found title
                 albums[i] = albums[i+1];        // Move album from next to current album
             deleted = true;                     // Set deleted to true
-            index--;                            // Decrease index by one
+            count--;                            // Decrease count by one
         }
         return deleted;                         // Return if album was deleted
     }

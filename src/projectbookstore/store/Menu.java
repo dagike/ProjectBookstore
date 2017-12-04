@@ -171,19 +171,19 @@ public class Menu {
                                 bookStore.searchAlbum();            // Search Album
                                 break;
                         case 2:System.out.println("Books");
-                                bookStore.displayBook();            // Search Book
+                                bookStore.searchBook();             // Search Book
                                 break;
                         case 3:System.out.println("Game Consoles");
-                                bookStore.displayGameConsole();     // Search Game Console
+                                //bookStore.searchGameConsole();      // Search Game Console
                                 break;
                         case 4:System.out.println("Gift Cards");
-                                bookStore.displayGiftCard();        // Search Gift Card
+                                //bookStore.searchGiftCard();         // Search Gift Card
                                 break;
                         case 5:System.out.println("Movies");
-                                bookStore.displayMovie();           // Search Movie
+                                //bookStore.searchMovie();            // Search Movie
                                 break;
                         case 6:System.out.println("Video Games");
-                                bookStore.displayVideoGame();       // Search Video Game
+                                //bookStore.searchVideoGame();        // Search Video Game
                     }
                     break;
                     // Exit the option menu back to category menu no action made

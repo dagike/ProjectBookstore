@@ -19,8 +19,8 @@ import java.util.Scanner;                   // Scanner object
 public class BookStore {
     // Attributes
     private final AlbumDB albumList;
-    private final List<Book> books;
-    private final List<GameConsole> gameConsoles;
+    private final BookDB bookList;
+    private final GameConsoleDB gameConsoleList;
     private final List<GiftCard> giftCards;
     private final List<Movie> movies;
     private final List<VideoGame> videoGames;
@@ -30,19 +30,22 @@ public class BookStore {
     // Constructor
     public BookStore(){
         albumList = new AlbumDB();
-        books = new ArrayList();
-        gameConsoles = new ArrayList();
+        bookList = new BookDB();
+        gameConsoleList = new GameConsoleDB();
         giftCards = new ArrayList();
         movies = new ArrayList();
         videoGames = new ArrayList();
     }
        
+    // Ask for an album and return as a Album object
     public Album askAlbum(String title){
         // new Album object
         Album album = new Album();
+        // int Array for date {year, month, day}
         int intDate[] = {0, 0, 0};
         // Scanner object for user input
         Scanner input = new Scanner(System.in);
+        
         // Ask for all the other fields
         album.setTitle(title);
         System.out.print("Artist: ");
@@ -65,7 +68,10 @@ public class BookStore {
             try{
                 System.out.print("Duration: ");
                 album.setDuration(input.nextInt());
-                break;
+                if(album.getDuration() > 0)     // Check if duration is not negative
+                    break;
+                else
+                    System.out.println("Only positive numbers");
             }catch(Exception e){
                 //Display error message
                 System.out.println("Only numbers without decimal allowed, try again");
@@ -77,7 +83,10 @@ public class BookStore {
             try{
                 System.out.print("Price: ");
                 album.setPrice(input.nextDouble());
-                break;
+                if(album.getPrice() > 0)    // Check if price is not negative
+                    break; 
+                else
+                    System.out.println("Only positive numbers");
             }catch(Exception e){
                 //Display error message
                 System.out.println("Only numbers allowed, try again");
@@ -98,7 +107,7 @@ public class BookStore {
         waitUser();        
     }
     
-    // Delete an album from the list albums by searching the title 
+    // Delete an album from the albumList by searching the title 
     public void deleteAlbum(){
         String title = askTitle();                      // Ask for a title to user
         // Display message if the object was deleted or title was not found
@@ -106,527 +115,341 @@ public class BookStore {
         waitUser();
     }
     
-    // Delete an album from the list albums by searching the title
+    // Modify an album from the albumList by searching the title
     public void modifyAlbum(){
-        String title = askTitle();                      // Ask for a title to user
-        if(albumList.findAlbumByTitle(title) < 0)       // If title doesn't exist in albumList
-            System.out.println("Title not found");      
-        else
-            // Display message if the object was added or there was an error
-            System.out.println(albumList.addAlbum(askAlbum(title)) ? "Album Changed" : "Error updating");
+        if(bookList.getCount() > 0){                    // Check if albumList is not empty
+            String title = askTitle();                      // Ask for a title to user
+            if(albumList.findAlbumByTitle(title) < 0)       // If title doesn't exist in albumList
+                System.out.println("Title not found");      
+            else
+                // Display message if the object was added or there was an error
+                System.out.println(albumList.addAlbum(askAlbum(title)) ? "Album Changed" : "Error updating");
+        } else
+            System.out.println("List is Empty");
         waitUser();
     }
     
     // Display album with search criteria Artist or Genre
     public void searchAlbum(){
-        Scanner input = new Scanner(System.in);
-        String searchOption, searchCriteria;
-        if(albumList.getCount() > 0)
-            while(true){
+        Scanner input = new Scanner(System.in);     // Scanner input
+        String searchOption;                        // Choose which type of search 
+        String searchCriteria;                      // Type what to search
+        
+        // Choose between Artist search or Genre search
+        if(albumList.getCount() > 0)                // If albumList is not empty
+            while(true){    // While the user choose an invalid option
                 System.out.println("Choose criteria searching\n1. Artist\n2. Genre");
-                searchOption = input.nextLine();
-                if(searchOption.compareTo("1") == 0){
+                searchOption = input.nextLine();                // User choice
+                if(searchOption.compareTo("1") == 0){           // Artist Search
                     System.out.print("Enter Artist: ");
-                    searchCriteria = input.nextLine();
-                    if(!albumList.displayAlbumByArtist(searchCriteria))
-                        System.out.println("Artist not found");
+                    searchCriteria = input.nextLine();          // Which Artist to Search
+                    if(!albumList.displayAlbumByArtist(searchCriteria)) // Search
+                        System.out.println("Artist not found"); // Search failed
                     break;
-                } else if(searchOption.compareTo("2") == 0){
-                    System.out.print("Enter Genre: ");
-                    searchCriteria = input.nextLine();
-                    if(!albumList.displayAlbumByGenre(searchCriteria))
-                        System.out.println("Genre not found");
+                } else if(searchOption.compareTo("2") == 0){    // Genre Search
+                    System.out.print("Enter Genre: ");      
+                    searchCriteria = input.nextLine();          // Which Artist to Search
+                    if(!albumList.displayAlbumByGenre(searchCriteria)) // Search
+                        System.out.println("Genre not found");  // Search failed
                     break;
                 } else 
-                    System.out.println("Invalid option");
+                    System.out.println("Invalid option");       // Not a valid option  
             }
         else
             System.out.println("List is empty");
         waitUser();
     }
     
-    // Display an album or all the objects from the list albums
+    // Display an album or all the objects from the albumList
     public void displayAlbum(){
-        albumList.displayAlbumList();
+        if(bookList.getCount() > 0)             // Check if albumList is not empty
+            albumList.displayAlbumList();
+        else 
+            System.out.println("List is Empty");
         waitUser();
     }
     
-    //Create a new object Book to add to the list books with user inputs
-    public void addBook(){
+    // Ask for an album and return as a Album object
+    public Book askBook(String title){
         //new Book object
         Book book = new Book();
         //Scanner object for user input
         Scanner input = new Scanner(System.in);
-                
-        //Display message for the object book fields
-        System.out.print("Title: ");
-        //Search if title already exist in another object in the books list
-        book.setTitle(input.nextLine());
-        if(searchBook(book.getTitle()))
-            System.out.println("Title already exists"); //Title must be unique in each book
-        else{
-            //Ask for all the other fields
-            System.out.print("Author: ");
-            book.setAuthor(input.nextLine());
-            System.out.print("Genre: ");
-            book.setGenre(input.nextLine());
-            System.out.print("Publisher: ");
-            book.setPublisher(input.nextLine());
-            System.out.print("Language: ");
-            book.setLanguage(input.nextLine());
-            System.out.print("ISBN: ");
-            book.setISBN(input.nextLine());
-            //Validate if Pages is just a number without decimals
-            while(true){
-                try{
-                    System.out.print("Pages: ");
-                    book.setPages(input.nextInt());
-                    break;
-                }catch(Exception e){
-                    //Display error message
-                    System.out.println("Only numbers without decimal allowed, try again");
-                    input.next();
-                }
-            }
-            //Validate if Publication Year is just a number without decimals
-            while(true){
-                try{
-                    System.out.print("Publication Year: ");
-                    book.setPublicationYear(input.nextInt());
-                    break;
-                }catch(Exception e){
-                    //Display error message
-                    System.out.println("Only numbers without decimal allowed, try again");
-                    input.next();
-                }
-            }
-            //Validate if Price is just a number
-            while(true){
-                try{
-                    System.out.print("Price: ");
-                    book.setPrice(input.nextDouble());
-                    break;
-                }catch(Exception e){
-                    //Display error message
-                    System.out.println("Only numbers allowed, try again");
-                    input.next();
-                }
-            }
-            //Add the object with all the inputs to the list books
-            books.add(book);
-            //Display success message
-            System.out.println("New Book Added");
-        }
         
-        System.out.println("Please press [Enter] to continue");
-        input.nextLine();
+        //Set title with argument
+        book.setTitle(title);
+        //Ask for all the other fields
+        System.out.print("Author: ");
+        book.setAuthor(input.nextLine());
+        System.out.print("Genre: ");
+        book.setGenre(input.nextLine());
+        System.out.print("Publisher: ");
+        book.setPublisher(input.nextLine());
+        System.out.print("Language: ");
+        book.setLanguage(input.nextLine());
+        System.out.print("ISBN: ");
+        book.setISBN(input.nextLine());
+        //Validate if Pages is just a number without decimals
+        while(true){
+            try{
+                System.out.print("Pages: ");
+                book.setPages(input.nextInt());
+                if(book.getPages() > 0)
+                    break;
+                else
+                    System.out.println("Only positive numbers");
+            }catch(Exception e){
+                //Display error message
+                System.out.println("Only numbers without decimal allowed, try again");
+                input.next();
+            }
+        }
+        //Validate if Publication Year is just a number without decimals
+        while(true){
+            try{
+                System.out.print("Publication Year: ");
+                book.setPublicationYear(input.nextInt());
+                if(book.getPublicationYear() > 0)       // Check year is not negative
+                    break;
+                else
+                    System.out.println("Only positive numbers");
+            }catch(Exception e){
+                //Display error message
+                System.out.println("Only numbers without decimal allowed, try again");
+                input.next();
+            }
+        }
+        //Validate if Price is just a number
+        while(true){
+            try{
+                System.out.print("Price: ");
+                book.setPrice(input.nextDouble());
+                if(book.getPrice() > 0)             // Check price is not negative
+                    break;
+                else
+                    System.out.println("Only positive numbers");
+            }catch(Exception e){
+                //Display error message
+                System.out.println("Only numbers allowed, try again");
+                input.next();
+            }
+        }
+        return book;
     }
     
-    //Delete a book from the list books by searching the title 
+    // Add a book to bookList
+    public void addBook(){
+        String title = askTitle();                      // Ask for a title to user
+        if(bookList.findBookByTitle(title) >= 0)        // If title already exist in bookList
+            System.out.println("Title already exists"); // Title must be unique
+        else
+            // Display message if the object was added or list is Full
+            System.out.println(bookList.addBook(askBook(title)) ? "New Book Added" : "Book List Full");
+        waitUser();        
+    }
+    
+    // Delete a book from the bookList by searching the title 
     public void deleteBook(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!books.isEmpty()){
-            int index = 0;  //Used for the loop to get object by object in the list
-            String title;   //Search string input by user
-            boolean found = false;  //Check if book was found
-            //Display message to ask title to the user they want to delete
-            System.out.print("Which book do you want to delete?\nEnter title: ");
-            title = input.nextLine();   //User input title
-            
-            //Search for the title input by the user
-            while(index < books.size() && !found){
-                //Compare the title with the book object title
-                if(books.get(index).getTitle().compareToIgnoreCase(title) == 0){
-                    found = true;   //Title found in the list
-                    books.get(index).displayBook();   //Display book with the title
-                    System.out.println("Are you sure? (y/n)");  //User decide to delete
-                    //Delete if the user say "y"
-                    if(input.nextLine().compareToIgnoreCase("y") == 0){
-                        books.remove(index);   //Remove book from list
-                        System.out.println("Book Deleted");    //Display message success
-                    }
-                }
-                index++;    //increase index for next object in list
-            }
-            if(!found)
-                System.out.println("Book not found"); //Display Book not found in the list
-        }
-        else    //List has no object
-            System.out.println("List of Books is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();
+        if(bookList.getCount() > 0){                        // Check if bookList is not empty
+            String title = askTitle();                      // Ask for a title to user
+            // Display message if the object was deleted or title was not found
+            System.out.println(bookList.deleteBook(title) ? "Book Deleted" : "Title not found");
+        } else
+            System.out.println("List is Empty");
+        waitUser();
     }
     
-    //Modify a book from the list books by searching the title
+    // Modify a book from the bookList by searching the title
     public void modifyBook(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!books.isEmpty()){
-            int index = 0;  //Used for the loop to get object by object in the list
-            String title;   //Search string input by user
-            boolean found = false;  //Check if book was found
-            //Ask for the title of the book to modify in the books list
-            System.out.print("Which book you want to modify?\n Enter title: ");
-            title = input.nextLine();
-            //Search for the title until is found
-            while(index < books.size() && !found){
-                if(books.get(index).getTitle().compareToIgnoreCase(title) == 0){
-                    found = true;
-                    books.get(index).displayBook();   //Display found book
-                    System.out.println("Are you sure? (y/n)");  //Ask the user to confirm to modify found book
-                    //Ask again for the fields if the user say [y]es
-                    if(input.nextLine().compareToIgnoreCase("y") == 0){
-                        System.out.print("Author: ");
-                        books.get(index).setAuthor(input.nextLine());
-                        System.out.print("Genre: ");
-                        books.get(index).setGenre(input.nextLine());
-                        System.out.print("Publisher: ");
-                        books.get(index).setPublisher(input.nextLine());
-                        System.out.print("Language: ");
-                        books.get(index).setLanguage(input.nextLine());
-                        System.out.print("ISBN: ");
-                        books.get(index).setISBN(input.nextLine());
-                        //Validate if Pages is just a number without decimals
-                        while(true){
-                            try{
-                                System.out.print("Pages: ");
-                                books.get(index).setPages(input.nextInt());
-                                break;
-                            }catch(Exception e){
-                                //Display error message
-                                System.out.println("Only numbers without decimal allowed, try again");
-                                input.next();
-                            }
-                        }
-                        //Validate if Publication Year is just a number without decimals
-                        while(true){
-                            try{
-                                System.out.print("Publication Year: ");
-                                books.get(index).setPublicationYear(input.nextInt());
-                                break;
-                            }catch(Exception e){
-                                //Display error message
-                                System.out.println("Only numbers without decimal allowed, try again");
-                                input.next();
-                            }
-                        }
-                        //Validate if Price is just a number
-                        while(true){
-                            try{
-                                System.out.print("Price: ");
-                                books.get(index).setPrice(input.nextDouble());
-                                break;
-                            }catch(Exception e){
-                                //Display error message
-                                System.out.println("Only numbers allowed, try again");
-                                input.next();
-                            }
-                        }
-                        //Reset input scanner
-                        input.nextLine();
-                        //Display success message
-                        System.out.println("Book Modified");
-                    }
-                }
-                index++;
-            }
-            if(!found)
-                System.out.println("Book not found");  //Display Book not in the list
-        }
-        else    //List has no object
-            System.out.println("List of Books is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();  
+        if(bookList.getCount() > 0){                        // Check if bookList is not empty
+            String title = askTitle();                      // Ask for a title to user
+            if(albumList.findAlbumByTitle(title) < 0)       // If title doesn't exist in bookList
+                System.out.println("Title not found");      
+            else
+                // Display message if the object was added or there was an error
+                System.out.println(bookList.addBook(askBook(title)) ? "Album Changed" : "Error updating");
+        } else 
+            System.out.println("List is Empty"); 
+        waitUser();
     }
     
-    //Display a book or all the objects from the list books
+    // Display book with search criteria Author or Genre
+    public void searchBook(){
+        Scanner input = new Scanner(System.in);     // Scanner input
+        String searchOption;                        // Choose which type of search 
+        String searchCriteria;                      // Type what to search
+        
+        // Choose between Artist search or Genre search
+        if(albumList.getCount() > 0)                // If albumList is not empty
+            while(true){    // While the user choose an invalid option
+                System.out.println("Choose criteria searching\n1. Author\n2. Genre");
+                searchOption = input.nextLine();                // User choice
+                if(searchOption.compareTo("1") == 0){           // Author Search
+                    System.out.print("Enter Artist: ");
+                    searchCriteria = input.nextLine();          // Which Author to Search
+                    if(!bookList.displayBookByAuthor(searchCriteria)) // Search
+                        System.out.println("Artist not found"); // Search failed
+                    break;
+                } else if(searchOption.compareTo("2") == 0){    // Genre Search
+                    System.out.print("Enter Genre: ");      
+                    searchCriteria = input.nextLine();          // Which Artist to Search
+                    if(!bookList.displayBookByGenre(searchCriteria)) // Search
+                        System.out.println("Genre not found");  // Search failed
+                    break;
+                } else 
+                    System.out.println("Invalid option");       // Not a valid option  
+            }
+        else
+            System.out.println("List is empty");
+        waitUser();
+    }
+    
+    // Display a book or all the objects from the bookList
     public void displayBook(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!books.isEmpty()){
-            String title;
-            boolean found = false;
-            //Display message to ask display one book with a title seach or all books in the list book
-            System.out.println("Type title to search or press [Enter] for all books");
-            title = input.nextLine();
-            //Check the user choosen option
-            if(title.compareTo("") != 0){
-                //Search title in object by object in the book list
-                for(Book book: books){
-                    //Compare user input title and the title in the current object
-                    if(book.getTitle().compareToIgnoreCase(title) == 0){
-                        found = true;   //Book found
-                        book.displayBook();   //Display Book found
-                    }
-                }
-                if(!found)
-                    System.out.println("Book not found");  //Display Book not in the list
-            }
-            else                    //Second option
-                //Display all book object in the list
-                books.forEach((book) -> {
-                    book.displayBook();
-                });
-        }
-        else    //List has no object
-            System.out.println("List of Books is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();
-    }
-    
-    //Search by title if it exist in the books list 
-    public boolean searchBook(String title){
-        return books.stream().anyMatch((book) 
-                -> (book.getTitle().compareToIgnoreCase(title) == 0));
+        if(bookList.getCount() > 0)                       // Check if bookList is not empty
+            bookList.displayBookList();
+        else
+            System.out.println("List is Empty");
+        waitUser();
     }
     
     //Create a new object GameConsole to add to the list gameConsoles with user inputs
-    public void addGameConsole(){
+    public GameConsole askGameConsole(String title){
         //new GameConsole object
         GameConsole gameConsole = new GameConsole();
         //Scanner object for user input
         Scanner input = new Scanner(System.in);
-                
-        //Display message for the object gameConsole fields
-        System.out.print("Name: ");
-        //Search if name already exist in another object in the gameConsoles list
-        gameConsole.setName(input.nextLine());
-        if(searchGameConsole(gameConsole.getName()))
-            System.out.println("Name already exists"); //Name must be unique in each Game Console
-        else{
-            //Ask for all the other fields
-            System.out.print("Company: ");
-            gameConsole.setCompany(input.nextLine());
-            //Ask for the releaseDate until is a valid date
-            while(true){
-                System.out.print("Release Date: ");
-                gameConsole.setReleaseDate(input.nextLine());
-                //Validate if releaseDate is in the format yyyy-mm-dd
-                if(checkDate(gameConsole.getReleaseDate()))   
-                    break;
-            }
-            //Validate if memory is just a number without decimals
-            while(true){
-                try{
-                    System.out.print("Memory: ");
-                    gameConsole.setMemory(input.nextInt());
-                    break;
-                }catch(Exception e){
-                    //Display error message
-                    System.out.println("Only numbers without decimal allowed, try again");
-                    input.next();
-                }
-            }
-            //Validate if weight is just a number
-            while(true){
-                try{
-                    System.out.print("Weight: ");
-                    gameConsole.setWeight(input.nextDouble());
-                    break;
-                }catch(Exception e){
-                    //Display error message
-                    System.out.println("Only numbers allowed, try again");
-                    input.next();
-                }
-            }
-            //Validate if price is just a number
-            while(true){
-                try{
-                    System.out.print("Price: ");
-                    gameConsole.setPrice(input.nextDouble());
-                    break;
-                }catch(Exception e){
-                    //Display error message
-                    System.out.println("Only numbers allowed, try again");
-                    input.next();
-                }
-            }
-            //Add the object with all the inputs to the list gameConsoles
-            gameConsoles.add(gameConsole);
-            //Display success message
-            System.out.println("New Game Console Added");
-        }
+        // int Array for date {year, month, day}
+        int intDate[] = {0, 0, 0};
         
-        System.out.println("Please press [Enter] to continue");
-        input.nextLine();
+        gameConsole.setName(title);
+
+        //Ask for all the other fields
+        System.out.print("Company: ");
+        gameConsole.setCompany(input.nextLine());
+        //Ask for the releaseDate until is a valid date
+        while(true){
+            System.out.print("Release Date: ");
+            String date = input.nextLine();
+            if(checkDate(date, intDate)){
+                gameConsole.setReleaseDate(intDate[0], intDate[1], intDate[2]);
+                break;
+            }
+        }
+        //Validate if memory is just a number without decimals
+        while(true){
+            try{
+                System.out.print("Memory: ");
+                gameConsole.setMemory(input.nextInt());
+                break;
+            }catch(Exception e){
+                //Display error message
+                System.out.println("Only numbers without decimal allowed, try again");
+                input.next();
+            }
+        }
+        //Validate if weight is just a number
+        while(true){
+            try{
+                System.out.print("Weight: ");
+                gameConsole.setWeight(input.nextDouble());
+                break;
+            }catch(Exception e){
+                //Display error message
+                System.out.println("Only numbers allowed, try again");
+                input.next();
+            }
+        }
+        //Validate if price is just a number
+        while(true){
+            try{
+                System.out.print("Price: ");
+                gameConsole.setPrice(input.nextDouble());
+                break;
+            }catch(Exception e){
+                //Display error message
+                System.out.println("Only numbers allowed, try again");
+                input.next();
+            }
+        }
+        //Add the object with all the inputs to the list gameConsoles
+        return gameConsole;
     }
     
-    //Delete a game console from the list gameConsoles by searching the title
+    // Add a book to gameConsoleList
+    public void addGameConsole(){
+        String name = askName();                        // Ask for a name to user
+        if(bookList.findBookByTitle(name) >= 0)         // If title already exist in gameConsoleList
+            System.out.println("Name already exists");  // Name must be unique
+        else
+            // Display message if the object was added or list is Full
+            System.out.println(gameConsoleList.addGameConsole(askGameConsole(name)) ? "New Game Console Added" : "Game Console List Full");
+        waitUser();        
+    }
+    
+    // Delete a Game Console from the bookList by searching the name 
     public void deleteGameConsole(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!gameConsoles.isEmpty()){
-            int index = 0;  //Used for the loop to get object by object in the list
-            String name;   //Search string input by user
-            boolean found = false;  //Check if gameConsole was found
-            //Display message to ask name to the user they want to delete
-            System.out.print("Which Game Console do you want to delete?\nEnter name: ");
-            name = input.nextLine();   //User input name
-            
-            //Search for the name input by the user
-            while(index < gameConsoles.size() && !found){
-                //Compare the name with the gameConsole object name
-                if(gameConsoles.get(index).getName().compareToIgnoreCase(name) == 0){
-                    found = true;   //Name found in the list
-                    gameConsoles.get(index).displayGameConsole();   //Display gameConsole with the name
-                    System.out.println("Are you sure? (y/n)");  //User decide to delete
-                    //Delete if the user say "y"
-                    if(input.nextLine().compareToIgnoreCase("y") == 0){
-                        gameConsoles.remove(index);   //Remove gameConsole from list
-                        System.out.println("Game Console Deleted");    //Display message success
-                    }
-                }
-                index++;    //increase index for next object in list
-            }
-            if(!found)
-                System.out.println("Game Console not found"); //Display GameConsole not found in the list
-        }
-        else    //List has no object
-            System.out.println("List of Game Consoles is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();
+        if(bookList.getCount() > 0){                        // Check if gameConsoleList is not empty
+            String name = askName();                        // Ask for a name to user
+            // Display message if the object was deleted or name was not found
+            System.out.println(gameConsoleList.deleteGameConsole(name) ? "Game Console Deleted" : "Name not found");
+        } else
+            System.out.println("List is Empty");
+        waitUser();
     }
     
-    //Modify a game console from the list gameConsoles by searching the title
+    // Modify a Game Console from the bookList by searching the title
     public void modifyGameConsole(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!gameConsoles.isEmpty()){
-            int index = 0;  //Used for the loop to get object by object in the list
-            String name;   //Search string input by user
-            boolean found = false;  //Check if gameConsole was found
-            //Ask for the name of the gameConsole to modify in the gameConsoles list
-            System.out.print("Which Game Console you want to modify?\n Enter name: ");
-            name = input.nextLine();
-            //Search for the name until is found
-            while(index < gameConsoles.size() && !found){
-                if(gameConsoles.get(index).getName().compareToIgnoreCase(name) == 0){
-                    found = true;
-                    gameConsoles.get(index).displayGameConsole();   //Display found gameConsole
-                    System.out.println("Are you sure? (y/n)");  //Ask the user to confirm to modify found gameConsole
-                    //Ask again for the fields if the user say [y]es
-                    if(input.nextLine().compareToIgnoreCase("y") == 0){
-                        System.out.print("Company: ");
-                        gameConsoles.get(index).setCompany(input.nextLine());
-                        //Ask for the releaseDate until is a valid date
-                        while(true){
-                            System.out.print("Release Date: ");
-                            gameConsoles.get(index).setReleaseDate(input.nextLine());
-                            //Validate if releaseDate is in the format yyyy-mm-dd
-                            if(checkDate(gameConsoles.get(index).getReleaseDate()))   
-                                break;
-                        }
-                        //Validate if memory is just a number without decimals
-                        while(true){
-                            try{
-                                System.out.print("Memory: ");
-                                gameConsoles.get(index).setMemory(input.nextInt());
-                                break;
-                            }catch(Exception e){
-                                //Display error message
-                                System.out.println("Only numbers without decimal allowed, try again");
-                                input.next();
-                            }
-                        }
-                        //Validate if weight is just a number
-                        while(true){
-                            try{
-                                System.out.print("Weight: ");
-                                gameConsoles.get(index).setWeight(input.nextDouble());
-                                break;
-                            }catch(Exception e){
-                                //Display error message
-                                System.out.println("Only numbers allowed, try again");
-                                input.next();
-                            }
-                        }
-                        //Validate if price is just a number
-                        while(true){
-                            try{
-                                System.out.print("Price: ");
-                                gameConsoles.get(index).setPrice(input.nextDouble());
-                                break;
-                            }catch(Exception e){
-                                //Display error message
-                                System.out.println("Only numbers allowed, try again");
-                                input.next();
-                            }
-                        }
-                        //Reset input scanner
-                        input.nextLine();
-                        //Display success message
-                        System.out.println("Game Console Modified");
-                    }
-                }
-                index++;
-            }
-            if(!found)
-                System.out.println("Game Console not found");  //Display GameConsole not in the list
-        }
-        else    //List has no object
-            System.out.println("List of Game Consoles is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();  
+        if(bookList.getCount() > 0){                            // Check if gameConsoleList is not empty
+            String name = askName();                            // Ask for a name to user
+            if(gameConsoleList.findGameConsoleByName(name) < 0) // If name doesn't exist in gameConsoleList
+                System.out.println("Name not found");      
+            else
+                // Display message if the object was added or there was an error
+                System.out.println(gameConsoleList.addGameConsole(askGameConsole(name)) ? "Game Console Changed" : "Error updating");
+        } else 
+            System.out.println("List is Empty"); 
+        waitUser();
     }
     
-    //Display a game console or all objects from the list gameConsoles
+    // Display Game Console with search criteria Company
+    public void searchGameConsole(){
+        Scanner input = new Scanner(System.in);                 // Scanner input
+        String searchOption;                                    // Choose which type of search 
+        String searchCriteria;                                  // Type what to search
+        
+        // Choose between Artist search or Genre search
+        if(gameConsoleList.getCount() > 0)                      // If gameConsoleList is not empty
+            while(true){    // While the user choose an invalid option
+                System.out.println("Choose criteria searching\n1. Company\n2. Company");
+                searchOption = input.nextLine();                // User choice
+                if(searchOption.compareTo("1") == 0){           // Author Search
+                    System.out.print("Enter Company: ");
+                    searchCriteria = input.nextLine();          // Which Company to Search
+                    if(!gameConsoleList.displayGameConsoleByCompany(searchCriteria)) // Search
+                        System.out.println("Company not found");// Search failed
+                    break;
+                } else if(searchOption.compareTo("2") == 0){    // Genre Search
+                    System.out.print("Enter Company: ");      
+                    searchCriteria = input.nextLine();          // Which Company to Search
+                    if(!gameConsoleList.displayGameConsoleByCompany(searchCriteria)) // Search
+                        System.out.println("Company not found");// Search failed
+                    break;
+                } else 
+                    System.out.println("Invalid option");       // Not a valid option  
+            }
+        else
+            System.out.println("List is empty");
+        waitUser();
+    }
+    
+    // Display a Game Console or all the objects from the bookList
     public void displayGameConsole(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!gameConsoles.isEmpty()){
-            String name;
-            boolean found = false;
-            //Display message to ask display one gameConsole with a name seach or all gameConsoles in the list gameConsole
-            System.out.println("Type name to search or press [Enter] for all Game Consoles");
-            name = input.nextLine();
-            //Check the user choosen option
-            if(name.compareTo("") != 0){
-                //Search name in object by object in the gameConsole list
-                for(GameConsole gameConsole: gameConsoles){
-                    //Compare user input name and the name in the current object
-                    if(gameConsole.getName().compareToIgnoreCase(name) == 0){
-                        found = true;   //GameConsole found
-                        gameConsole.displayGameConsole();   //Display GameConsole found
-                    }
-                }
-                if(!found)
-                    System.out.println("Game Console not found");  //Display GameConsole not in the list
-            }
-            else                    //Second option
-                //Display all gameConsole object in the list
-                gameConsoles.forEach((gameConsole) -> {
-                    gameConsole.displayGameConsole();
-                });
-        }
-        else    //List has no object
-            System.out.println("List of Game Consoles is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();
-    }
-    
-    //Search by name if it exist in the gameConsoles list 
-    public boolean searchGameConsole(String name){
-        return gameConsoles.stream().anyMatch((gameConsole) 
-                -> (gameConsole.getName().compareToIgnoreCase(name) == 0));
+        if(bookList.getCount() > 0)                       // Check if gameConsoleList is not empty
+            gameConsoleList.displayGameConsoleList();
+        else
+            System.out.println("List is Empty");
+        waitUser();
     }
     
 //Create a new object GiftCard to add to the list gifs with user inputs
@@ -1281,6 +1104,12 @@ public class BookStore {
     // Ask for title
     public String askTitle(){
         System.out.print("Title: ");
+        return new Scanner(System.in).nextLine();
+    }
+    
+    // Ask for name
+    public String askName(){
+        System.out.print("Name: ");
         return new Scanner(System.in).nextLine();
     }
     

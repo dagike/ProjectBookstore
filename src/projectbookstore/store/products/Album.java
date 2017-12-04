@@ -110,7 +110,7 @@ public class Album {
 
     // Mutator for price
     public void setPrice(double price) {
-        if(price > 0)
+        if(price >= 0)
             this.price = price;
     }
     
