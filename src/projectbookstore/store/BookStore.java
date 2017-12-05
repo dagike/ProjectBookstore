@@ -21,7 +21,7 @@ public class BookStore {
     private final AlbumDB albumList;
     private final BookDB bookList;
     private final GameConsoleDB gameConsoleList;
-    private final List<GiftCard> giftCards;
+    private final GiftCardDB giftCardList;
     private final List<Movie> movies;
     private final List<VideoGame> videoGames;
     
@@ -32,7 +32,7 @@ public class BookStore {
         albumList = new AlbumDB();
         bookList = new BookDB();
         gameConsoleList = new GameConsoleDB();
-        giftCards = new ArrayList();
+        giftCardList = new GiftCardDB();
         movies = new ArrayList();
         videoGames = new ArrayList();
     }
@@ -109,21 +109,25 @@ public class BookStore {
     
     // Delete an album from the albumList by searching the title 
     public void deleteAlbum(){
-        String title = askTitle();                      // Ask for a title to user
-        // Display message if the object was deleted or title was not found
-        System.out.println(albumList.deleteAlbum(title) ? "Album Deleted" : "Title not found");
+        if(albumList.getCount() > 0){                        // Check if albumList is not empty
+            String title = askTitle();                      // Ask for a title to user
+            // Display message if the object was deleted or title was not found
+            System.out.println(albumList.deleteAlbum(title) ? "Album Deleted" : "Title not found");
+            waitUser();
+        } else
+            System.out.println("List is Empty");
         waitUser();
     }
     
     // Modify an album from the albumList by searching the title
     public void modifyAlbum(){
-        if(bookList.getCount() > 0){                    // Check if albumList is not empty
+        if(albumList.getCount() > 0){                    // Check if albumList is not empty
             String title = askTitle();                      // Ask for a title to user
             if(albumList.findAlbumByTitle(title) < 0)       // If title doesn't exist in albumList
                 System.out.println("Title not found");      
             else
                 // Display message if the object was added or there was an error
-                System.out.println(albumList.addAlbum(askAlbum(title)) ? "Album Changed" : "Error updating");
+                System.out.println(albumList.updateAlbum(title, askAlbum(title)) ? "Album Changed" : "Error updating");
         } else
             System.out.println("List is Empty");
         waitUser();
@@ -162,14 +166,14 @@ public class BookStore {
     
     // Display an album or all the objects from the albumList
     public void displayAlbum(){
-        if(bookList.getCount() > 0)             // Check if albumList is not empty
+        if(albumList.getCount() > 0)             // Check if albumList is not empty
             albumList.displayAlbumList();
         else 
             System.out.println("List is Empty");
         waitUser();
     }
     
-    // Ask for an album and return as a Album object
+    // Ask for a book and return as a Book object
     public Book askBook(String title){
         //new Book object
         Book book = new Book();
@@ -194,7 +198,7 @@ public class BookStore {
             try{
                 System.out.print("Pages: ");
                 book.setPages(input.nextInt());
-                if(book.getPages() > 0)
+                if(book.getPages() > 0)                 // Check pages is not negative
                     break;
                 else
                     System.out.println("Only positive numbers");
@@ -267,7 +271,7 @@ public class BookStore {
                 System.out.println("Title not found");      
             else
                 // Display message if the object was added or there was an error
-                System.out.println(bookList.addBook(askBook(title)) ? "Album Changed" : "Error updating");
+                System.out.println(bookList.updateBook(title, askBook(title)) ? "Album Changed" : "Error updating");
         } else 
             System.out.println("List is Empty"); 
         waitUser();
@@ -341,7 +345,11 @@ public class BookStore {
             try{
                 System.out.print("Memory: ");
                 gameConsole.setMemory(input.nextInt());
-                break;
+                if(gameConsole.getMemory() > 0)             // Check memory is not negative
+                    break;
+                else
+                    System.out.println("Only positive numbers");
+                    
             }catch(Exception e){
                 //Display error message
                 System.out.println("Only numbers without decimal allowed, try again");
@@ -353,6 +361,10 @@ public class BookStore {
             try{
                 System.out.print("Weight: ");
                 gameConsole.setWeight(input.nextDouble());
+                if(gameConsole.getWeight() > 0)             // Check weight is not negative
+                    break;
+                else
+                    System.out.println("Only positive numbers");
                 break;
             }catch(Exception e){
                 //Display error message
@@ -365,6 +377,10 @@ public class BookStore {
             try{
                 System.out.print("Price: ");
                 gameConsole.setPrice(input.nextDouble());
+                if(gameConsole.getPrice() > 0)             // Check price is not negative
+                    break;
+                else
+                    System.out.println("Only positive numbers");
                 break;
             }catch(Exception e){
                 //Display error message
@@ -378,18 +394,18 @@ public class BookStore {
     
     // Add a book to gameConsoleList
     public void addGameConsole(){
-        String name = askName();                        // Ask for a name to user
-        if(bookList.findBookByTitle(name) >= 0)         // If title already exist in gameConsoleList
-            System.out.println("Name already exists");  // Name must be unique
+        String name = askName();                            // Ask for a name to user
+        if(gameConsoleList.findGameConsoleByName(name) >= 0)// If title already exist in gameConsoleList
+            System.out.println("Name already exists");      // Name must be unique
         else
             // Display message if the object was added or list is Full
             System.out.println(gameConsoleList.addGameConsole(askGameConsole(name)) ? "New Game Console Added" : "Game Console List Full");
         waitUser();        
     }
     
-    // Delete a Game Console from the bookList by searching the name 
+    // Delete a Game Console from the gameConsoleList by searching the name 
     public void deleteGameConsole(){
-        if(bookList.getCount() > 0){                        // Check if gameConsoleList is not empty
+        if(gameConsoleList.getCount() > 0){                 // Check if gameConsoleList is not empty
             String name = askName();                        // Ask for a name to user
             // Display message if the object was deleted or name was not found
             System.out.println(gameConsoleList.deleteGameConsole(name) ? "Game Console Deleted" : "Name not found");
@@ -400,13 +416,13 @@ public class BookStore {
     
     // Modify a Game Console from the bookList by searching the title
     public void modifyGameConsole(){
-        if(bookList.getCount() > 0){                            // Check if gameConsoleList is not empty
+        if(gameConsoleList.getCount() > 0){                     // Check if gameConsoleList is not empty
             String name = askName();                            // Ask for a name to user
             if(gameConsoleList.findGameConsoleByName(name) < 0) // If name doesn't exist in gameConsoleList
                 System.out.println("Name not found");      
             else
                 // Display message if the object was added or there was an error
-                System.out.println(gameConsoleList.addGameConsole(askGameConsole(name)) ? "Game Console Changed" : "Error updating");
+                System.out.println(gameConsoleList.updateGameConsole(name, askGameConsole(name)) ? "Game Console Changed" : "Error updating");
         } else 
             System.out.println("List is Empty"); 
         waitUser();
@@ -445,7 +461,7 @@ public class BookStore {
     
     // Display a Game Console or all the objects from the bookList
     public void displayGameConsole(){
-        if(bookList.getCount() > 0)                       // Check if gameConsoleList is not empty
+        if(gameConsoleList.getCount() > 0)                      // Check if gameConsoleList is not empty
             gameConsoleList.displayGameConsoleList();
         else
             System.out.println("List is Empty");
@@ -453,206 +469,128 @@ public class BookStore {
     }
     
 //Create a new object GiftCard to add to the list gifs with user inputs
-    public void addGiftCard(){
+    public GiftCard askGiftCard(String title){
         //new GiftCard object
         GiftCard giftCard = new GiftCard();
         //Scanner object for user input
         Scanner input = new Scanner(System.in);
                 
-        //Display message for the object giftCard fields
-        System.out.print("Name: ");
-        //Search if name already exist in another object in the giftCards list
-        giftCard.setName(input.nextLine());
-        if(searchGiftCard(giftCard.getName()))
-            System.out.println("Name already exists"); //Name must be unique in each giftCard
-        else{
-            //Ask for all the other fields
-            System.out.print("Company: ");
-            giftCard.setCompany(input.nextLine());
-            System.out.print("Region: ");
-            giftCard.setRegion(input.nextLine());
-            //Validate if amount is just a number without decimals
-            while(true){
-                try{
-                    System.out.print("Amount: ");
-                    giftCard.setAmount(input.nextInt());
+        giftCard.setName(title);
+        //Ask for all the other fields
+        System.out.print("Company: ");
+        giftCard.setCompany(input.nextLine());
+        System.out.print("Region: ");
+        giftCard.setRegion(input.nextLine());
+        //Validate if amount is just a number without decimals
+        while(true){
+            try{
+                System.out.print("Amount: ");
+                giftCard.setAmount(input.nextInt());
+                if(giftCard.getAmount() > 0)             // Check amount is not negative
                     break;
-                }catch(Exception e){
-                    //Display error message
-                    System.out.println("Only numbers without decimal allowed, try again");
-                    input.next();
-                }
+                else
+                    System.out.println("Only positive numbers");
+                break;
+            }catch(Exception e){
+                //Display error message
+                System.out.println("Only numbers without decimal allowed, try again");
+                input.next();
             }
-            //Validate if price is just a number
-            while(true){
-                try{
-                    System.out.print("Price: ");
-                    giftCard.setPrice(input.nextDouble());
-                    break;
-                }catch(Exception e){
-                    //Display error message
-                    System.out.println("Only numbers allowed, try again");
-                    input.next();
-                }
-            }
-            //Add the object with all the inputs to the list giftCards
-            giftCards.add(giftCard);
-            //Display success message
-            System.out.println("New Gift Card Added");
         }
-        
-        System.out.println("Please press [Enter] to continue");
-        input.nextLine();
+        //Validate if price is just a number
+        while(true){
+            try{
+                System.out.print("Price: ");
+                giftCard.setPrice(input.nextDouble());
+                if(giftCard.getPrice() > 0)             // Check price is not negative
+                    break;
+                else
+                    System.out.println("Only positive numbers");
+                break;
+            }catch(Exception e){
+                //Display error message
+                System.out.println("Only numbers allowed, try again");
+                input.next();
+            }
+        }
+        //Add the object with all the inputs to the list giftCards
+        return giftCard;
     }
     
-    //Delete a gift card from the list giftCards by searching the name 
+    // Add a giftCard to giftCardList 
+    public void addGiftCard(){
+        String name = askName();                            // Ask for a name to user
+        if(giftCardList.findGiftCardByName(name) >= 0)      // If name already exist in giftCardList
+            System.out.println("Name already exists");      // Name must be unique
+        else
+            // Display message if the object was added or list is Full
+            System.out.println(giftCardList.addGiftCard(askGiftCard(name)) ? "New GiftCard Added" : "GiftCard List Full");
+        waitUser();        
+    }
+
+    // Delete a giftCard from the giftCardList by searching the name 
     public void deleteGiftCard(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!giftCards.isEmpty()){
-            int index = 0;  //Used for the loop to get object by object in the list
-            String name;   //Search string input by user
-            boolean found = false;  //Check if giftCard was found
-            //Display message to ask name to the user they want to delete
-            System.out.print("Which giftCard do you want to delete?\nEnter name: ");
-            name = input.nextLine();   //User input name
-            
-            //Search for the name input by the user
-            while(index < giftCards.size() && !found){
-                //Compare the name with the giftCard object name
-                if(giftCards.get(index).getName().compareToIgnoreCase(name) == 0){
-                    found = true;   //Name found in the list
-                    giftCards.get(index).displayGiftCard();   //Display gift card with the name
-                    System.out.println("Are you sure? (y/n)");  //User decide to delete
-                    //Delete if the user say "y"
-                    if(input.nextLine().compareToIgnoreCase("y") == 0){
-                        giftCards.remove(index);   //Remove gift card from list
-                        System.out.println("Gift Card Deleted");    //Display message success
-                    }
-                }
-                index++;    //increase index for next object in list
-            }
-            if(!found)
-                System.out.println("Gift Card not found"); //Display Gift Card not found in the list
-        }
-        else    //List has no object
-            System.out.println("List of GiftCards is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();
+        if(giftCardList.getCount() > 0){                  // Check if giftCardList is not empty
+            String name = askName();                      // Ask for a name to user
+            // Display message if the object was deleted or name was not found
+            System.out.println(giftCardList.deleteGiftCard(name) ? "GiftCard Deleted" : "Name not found");
+        } else 
+            System.out.println("List is Empty");
+        waitUser();
     }
-    
-    //Delete a gift card from the list giftCards by searching the name
+
+    // Modify a giftCard from the giftCardList by searching the name
     public void modifyGiftCard(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!giftCards.isEmpty()){
-            int index = 0;  //Used for the loop to get object by object in the list
-            String name;   //Search string input by user
-            boolean found = false;  //Check if giftCard was found
-            //Ask for the name of the giftCard to modify in the giftCards list
-            System.out.print("Which giftCard you want to modify?\n Enter name: ");
-            name = input.nextLine();
-            //Search for the name until is found
-            while(index < giftCards.size() && !found){
-                if(giftCards.get(index).getName().compareToIgnoreCase(name) == 0){
-                    found = true;
-                    giftCards.get(index).displayGiftCard();   //Display found gift card
-                    System.out.println("Are you sure? (y/n)");  //Ask the user to confirm to modify found gift card
-                    //Ask again for the fields if the user say [y]es
-                    if(input.nextLine().compareToIgnoreCase("y") == 0){
-                        System.out.print("Company: ");
-                        giftCards.get(index).setCompany(input.nextLine());
-                        System.out.print("Region: ");
-                        giftCards.get(index).setRegion(input.nextLine());
-                        //Validate if amount is just a number without decimals
-                        while(true){
-                            try{
-                                System.out.print("Amount: ");
-                                giftCards.get(index).setAmount(input.nextInt());
-                                break;
-                            }catch(Exception e){
-                                //Display an error message
-                                System.out.println("Only numbers without decimal allowed, try again");
-                                input.next();
-                            }
-                        }
-                        //Validate if price is just a number 
-                        while(true){
-                            try{
-                                System.out.print("Price: ");
-                                giftCards.get(index).setPrice(input.nextDouble());
-                                break;
-                            }catch(Exception e){
-                                //Display an error message
-                                System.out.println("Only numbers allowed, try again");
-                                input.next();
-                            }
-                        }
-                        //Reset input scanner
-                        input.nextLine();
-                        //Display success message
-                        System.out.println("Gift Card Modified");
-                    }
-                }
-                index++;
-            }
-            if(!found)
-                System.out.println("Gift Card not found");  //Display GiftCard not in the list
-        }
-        else    //List has no object
-            System.out.println("List of Gift Cards is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();  
+        if(giftCardList.getCount() > 0){                    // Check if giftCardList is not empty
+            String name = askName();                        // Ask for a name to user
+            if(giftCardList.findGiftCardByName(name) < 0)   // If name doesn't exist in giftCardList
+                System.out.println("Name not found");      
+            else
+                // Display message if the object was added or there was an error
+                System.out.println(giftCardList.updateGiftCard(name, askGiftCard(name)) ? "GiftCard Changed" : "Error updating");
+        } else
+            System.out.println("List is Empty");
+        waitUser();
     }
-    
-    //Display a gift card or all the objects from the list giftCards
+
+    // Display giftCard with search criteria Artist or Genre
+    public void searchGiftCard(){
+        Scanner input = new Scanner(System.in);     // Scanner input
+        String searchOption;                        // Choose which type of search 
+        String searchCriteria;                      // Type what to search
+
+        // Choose between Company search or Genre search
+        if(giftCardList.getCount() > 0)             // If giftCardList is not empty
+            while(true){    // While the user choose an invalid option
+                System.out.println("Choose criteria searching\n1. Company\n2. Region");
+                searchOption = input.nextLine();                // User choice
+                if(searchOption.compareTo("1") == 0){           // Company Search
+                    System.out.print("Enter Company: ");
+                    searchCriteria = input.nextLine();          // Which Company to Search
+                    if(!giftCardList.displayGiftCardByCompany(searchCriteria)) // Search
+                        System.out.println("Company not found");// Search failed
+                    break;
+                } else if(searchOption.compareTo("2") == 0){    // Region Search
+                    System.out.print("Enter Region: ");      
+                    searchCriteria = input.nextLine();          // Which Region to Search
+                    if(!giftCardList.displayGiftCardByRegion(searchCriteria)) // Search
+                        System.out.println("Region not found"); // Search failed
+                    break;
+                } else 
+                    System.out.println("Invalid option");       // Not a valid option  
+            }
+        else
+            System.out.println("List is empty");
+        waitUser();
+    }
+
+    // Display a giftCard or all the objects from the giftCardList
     public void displayGiftCard(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!giftCards.isEmpty()){
-            String name;
-            boolean found = false;
-            //Display message to ask display one giftCard with a name seach or all giftCards in the list giftCard
-            System.out.println("Type name to search or press [Enter] for all gift cards");
-            name = input.nextLine();
-            //Check the user choosen option
-            if(name.compareTo("") != 0){
-                //Search name in object by object in the giftCard list
-                for(GiftCard giftCard: giftCards){
-                    //Compare user input name and the name in the current object
-                    if(giftCard.getName().compareToIgnoreCase(name) == 0){
-                        found = true;   //GiftCard found
-                        giftCard.displayGiftCard();   //Display GiftCard found
-                    }
-                }
-                if(!found)
-                    System.out.println("Gift Card not found");  //Display GiftCard not in the list
-            }
-            else                    //Second option
-                //Display all giftCard object in the list
-                giftCards.forEach((giftCard) -> {
-                    giftCard.displayGiftCard();
-                });
-        }
-        else    //List has no object
-            System.out.println("List of Gift Cards is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();
-    }
-    
-    //Search by name if it exist in the giftCards list 
-    public boolean searchGiftCard(String name){
-        return giftCards.stream().anyMatch((giftCard) 
-                -> (giftCard.getName().compareToIgnoreCase(name) == 0));
+        if(giftCardList.getCount() > 0)             // Check if giftCardList is not empty
+            giftCardList.displayGiftCardList();
+        else 
+            System.out.println("List is Empty");
+        waitUser();
     }
     
     //Create a new object Movie to add to the list movies with user inputs

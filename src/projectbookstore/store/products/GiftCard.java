@@ -43,7 +43,8 @@ public class GiftCard {
 
     //Mutator for amount
     public void setAmount(int amount) {
-        this.amount = amount;
+        if(amount > 0)
+            this.amount = amount;
     }
 
     //Accesor for company
@@ -73,7 +74,8 @@ public class GiftCard {
 
     //Mutator for price
     public void setPrice(double price) {
-        this.price = price;
+        if(price > 0)
+            this.price = price;
     }
     
     //Display all the fields of the object

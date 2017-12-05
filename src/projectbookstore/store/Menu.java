@@ -174,10 +174,10 @@ public class Menu {
                                 bookStore.searchBook();             // Search Book
                                 break;
                         case 3:System.out.println("Game Consoles");
-                                //bookStore.searchGameConsole();      // Search Game Console
+                                bookStore.searchGameConsole();      // Search Game Console
                                 break;
                         case 4:System.out.println("Gift Cards");
-                                //bookStore.searchGiftCard();         // Search Gift Card
+                                bookStore.searchGiftCard();         // Search Gift Card
                                 break;
                         case 5:System.out.println("Movies");
                                 //bookStore.searchMovie();            // Search Movie
