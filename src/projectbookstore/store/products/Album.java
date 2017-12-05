@@ -27,7 +27,7 @@ public class Album {
     
     // Constructor
     public Album(){
-        artist= "";
+        artist = "";
         title = "";
         genre = "";
         language = "";

@@ -22,7 +22,7 @@ public class BookStore {
     private final BookDB bookList;
     private final GameConsoleDB gameConsoleList;
     private final GiftCardDB giftCardList;
-    private final List<Movie> movies;
+    private final MovieDB movieList;
     private final List<VideoGame> videoGames;
     
     // Methods
@@ -33,7 +33,7 @@ public class BookStore {
         bookList = new BookDB();
         gameConsoleList = new GameConsoleDB();
         giftCardList = new GiftCardDB();
-        movies = new ArrayList();
+        movieList = new MovieDB();
         videoGames = new ArrayList();
     }
        
@@ -58,8 +58,9 @@ public class BookStore {
         while(true){
             System.out.print("Release Date: ");
             String date = input.nextLine();
-            if(checkDate(date, intDate)){
-                album.setReleaseDate(intDate[0], intDate[1], intDate[2]);
+            if(checkDate(date, intDate)){           // Check date string
+                                 // ( year,      month       day) changed by checkDate method
+                album.setReleaseDate(intDate[0], intDate[1], intDate[2]); 
                 break;
             }
         }
@@ -113,7 +114,6 @@ public class BookStore {
             String title = askTitle();                      // Ask for a title to user
             // Display message if the object was deleted or title was not found
             System.out.println(albumList.deleteAlbum(title) ? "Album Deleted" : "Title not found");
-            waitUser();
         } else
             System.out.println("List is Empty");
         waitUser();
@@ -228,7 +228,7 @@ public class BookStore {
             try{
                 System.out.print("Price: ");
                 book.setPrice(input.nextDouble());
-                if(book.getPrice() > 0)             // Check price is not negative
+                if(book.getPrice() > 0)                 // Check price is not negative
                     break;
                 else
                     System.out.println("Only positive numbers");
@@ -254,8 +254,8 @@ public class BookStore {
     
     // Delete a book from the bookList by searching the title 
     public void deleteBook(){
-        if(bookList.getCount() > 0){                        // Check if bookList is not empty
-            String title = askTitle();                      // Ask for a title to user
+        if(bookList.getCount() > 0){                    // Check if bookList is not empty
+            String title = askTitle();                  // Ask for a title to user
             // Display message if the object was deleted or title was not found
             System.out.println(bookList.deleteBook(title) ? "Book Deleted" : "Title not found");
         } else
@@ -265,9 +265,9 @@ public class BookStore {
     
     // Modify a book from the bookList by searching the title
     public void modifyBook(){
-        if(bookList.getCount() > 0){                        // Check if bookList is not empty
-            String title = askTitle();                      // Ask for a title to user
-            if(albumList.findAlbumByTitle(title) < 0)       // If title doesn't exist in bookList
+        if(bookList.getCount() > 0){                    // Check if bookList is not empty
+            String title = askTitle();                  // Ask for a title to user
+            if(albumList.findAlbumByTitle(title) < 0)   // If title doesn't exist in bookList
                 System.out.println("Title not found");      
             else
                 // Display message if the object was added or there was an error
@@ -279,12 +279,12 @@ public class BookStore {
     
     // Display book with search criteria Author or Genre
     public void searchBook(){
-        Scanner input = new Scanner(System.in);     // Scanner input
-        String searchOption;                        // Choose which type of search 
-        String searchCriteria;                      // Type what to search
+        Scanner input = new Scanner(System.in);         // Scanner input
+        String searchOption;                            // Choose which type of search 
+        String searchCriteria;                          // Type what to search
         
         // Choose between Artist search or Genre search
-        if(albumList.getCount() > 0)                // If albumList is not empty
+        if(albumList.getCount() > 0)                    // If albumList is not empty
             while(true){    // While the user choose an invalid option
                 System.out.println("Choose criteria searching\n1. Author\n2. Genre");
                 searchOption = input.nextLine();                // User choice
@@ -335,8 +335,9 @@ public class BookStore {
         while(true){
             System.out.print("Release Date: ");
             String date = input.nextLine();
-            if(checkDate(date, intDate)){
-                gameConsole.setReleaseDate(intDate[0], intDate[1], intDate[2]);
+            if(checkDate(date, intDate)){           // Check date string
+                                 // ( year,      month       day) changed by checkDate method
+                gameConsole.setReleaseDate(intDate[0], intDate[1], intDate[2]); 
                 break;
             }
         }
@@ -594,234 +595,142 @@ public class BookStore {
     }
     
     //Create a new object Movie to add to the list movies with user inputs
-    public void addMovie(){
+    public Movie askMovie(String title){
         //new Movie object
         Movie movie = new Movie();
+        // int Array for date {year, month, day}
+        int intDate[] = {0, 0, 0};
         //Scanner object for user input
         Scanner input = new Scanner(System.in);
                 
-        //Display message for the object movie fields
-        System.out.print("Title: ");
-        //Search if title already exist in another object in the movies list
-        movie.setTitle(input.nextLine());
-        if(searchMovie(movie.getTitle()))
-            System.out.println("Title already exists"); //Title must be unique in each movie
-        else{
-            //Ask for all the other fields
-            System.out.print("Director: ");
-            movie.setDirector(input.nextLine());
-            System.out.print("Genre: ");
-            movie.setGenre(input.nextLine());
-            System.out.print("Rating: ");
-            movie.setRating(input.nextLine());
-            System.out.print("Language: ");
-            movie.setLanguage(input.nextLine());
-            System.out.print("Type: ");
-            movie.setType(input.nextLine());
-            //Ask for the Release Date until is a valid date
-            while(true){
-                System.out.print("Release Date: ");
-                movie.setReleaseDate(input.nextLine());
-                //Validate if releaseDate is in the format yyyy-mm-dd
-                if(checkDate(movie.getReleaseDate()))   
-                    break;
+        movie.setTitle(title);
+        //Ask for all the other fields
+        System.out.print("Director: ");
+        movie.setDirector(input.nextLine());
+        System.out.print("Genre: ");
+        movie.setGenre(input.nextLine());
+        System.out.print("Rating: ");
+        movie.setRating(input.nextLine());
+        System.out.print("Language: ");
+        movie.setLanguage(input.nextLine());
+        System.out.print("Type: ");
+        movie.setType(input.nextLine());
+        //Ask for the releaseDate until is a valid date
+        while(true){
+            System.out.print("Release Date: ");
+            String date = input.nextLine();
+            if(checkDate(date, intDate)){           // Check date string
+                                 // ( year,      month       day) changed by checkDate method
+                movie.setReleaseDate(intDate[0], intDate[1], intDate[2]); 
+                break;
             }
-            //Validate if duration is just a number without decimals
-            while(true){
-                try{
-                    System.out.print("Duration: ");
-                    movie.setDuration(input.nextInt());
-                    break;
-                }catch(Exception e){
-                    //Display error message
-                    System.out.println("Only numbers without decimal allowed, try again");
-                    input.next();
-                }
-            }
-            //Validate if price is just a number
-            while(true){
-                try{
-                    System.out.print("Price: ");
-                    movie.setPrice(input.nextDouble());
-                    break;
-                }catch(Exception e){
-                    //Display error message
-                    System.out.println("Only numbers allowed, try again");
-                    input.next();
-                }
-            }
-            //Add the object with all the inputs to the list movies
-            movies.add(movie);
-            //Display success message
-            System.out.println("New Movie Added");
         }
-        
-        System.out.println("Please press [Enter] to continue");
-        input.nextLine();
+        //Validate if duration is just a number without decimals
+        while(true){
+            try{
+                System.out.print("Duration: ");
+                if(movie.getDuration() > 0)               // Check duration is not negative
+                    break;
+                else
+                    System.out.println("Only positive numbers");
+            }catch(Exception e){
+                //Display error message
+                System.out.println("Only numbers without decimal allowed, try again");
+                input.next();
+            }
+        }
+        //Validate if price is just a number
+        while(true){
+            try{
+                System.out.print("Price: ");
+                if(movie.getPrice() > 0)                 // Check price is not negative
+                    break;
+                else
+                    System.out.println("Only positive numbers");
+            }catch(Exception e){
+                //Display error message
+                System.out.println("Only numbers allowed, try again");
+                input.next();
+            }
+        }
+        //Add the object with all the inputs to the list movies
+        return movie;
     }
     
-    //Delete a movie from the list movies by searching the title 
+        // Add an movie to movieList 
+    public void addMovie(){
+        String title = askTitle();                      // Ask for a title to user
+        if(movieList.findMovieByTitle(title) >= 0)      // If title already exist in movieList
+            System.out.println("Title already exists"); // Title must be unique
+        else
+            // Display message if the object was added or list is Full
+            System.out.println(movieList.addMovie(askMovie(title)) ? "New Movie Added" : "Movie List Full");
+        waitUser();        
+    }
+    
+    // Delete an movie from the movieList by searching the title 
     public void deleteMovie(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!movies.isEmpty()){
-            int index = 0;  //Used for the loop to get object by object in the list
-            String title;   //Search string input by user
-            boolean found = false;  //Check if movie was found
-            //Display message to ask title to the user they want to delete
-            System.out.print("Which movie do you want to delete?\nEnter title: ");
-            title = input.nextLine();   //User input title
-            
-            //Search for the title input by the user
-            while(index < movies.size() && !found){
-                //Compare the title with the movie ojbect title
-                if(movies.get(index).getTitle().compareToIgnoreCase(title) == 0){
-                    found = true;   //Title found in the list
-                    movies.get(index).displayMovie();   //Display movie with the title
-                    System.out.println("Are you sure? (y/n)");  //User decide to delete
-                    //Delete if the user say "y"
-                    if(input.nextLine().compareToIgnoreCase("y") == 0){
-                        movies.remove(index);   //Remove movie from list
-                        System.out.println("Movie Deleted");    //Display message success
-                    }
-                }
-                index++;    //increase index for next object in list
-            }
-            if(!found)
-                System.out.println("Movie not found"); //Display Movie not found in the list
-        }
-        else    //List has no object
-            System.out.println("List of Movies is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();
+        if(movieList.getCount() > 0){                        // Check if movieList is not empty
+            String title = askTitle();                      // Ask for a title to user
+            // Display message if the object was deleted or title was not found
+            System.out.println(movieList.deleteMovie(title) ? "Movie Deleted" : "Title not found");
+        } else
+            System.out.println("List is Empty");
+        waitUser();
     }
     
-    //Delete a movie from the list movies by searching the title
+    // Modify an movie from the movieList by searching the title
     public void modifyMovie(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!movies.isEmpty()){
-            int index = 0;  //Used for the loop to get object by object in the list
-            String title;   //Search string input by user
-            boolean found = false;  //Check if movie was found
-            //Ask for the title of the movie to modify in the movies list
-            System.out.print("Which movie you want to modify?\n Enter title: ");
-            title = input.nextLine();
-            //Search for the title until is found
-            while(index < movies.size() && !found){
-                if(movies.get(index).getTitle().compareToIgnoreCase(title) == 0){
-                    found = true;
-                    movies.get(index).displayMovie();   //Display found movie
-                    System.out.println("Are you sure? (y/n)");  //Ask the user to confirm to modify found movie
-                    //Ask again for the fields if the user say [y]es
-                    if(input.nextLine().compareToIgnoreCase("y") == 0){
-                        System.out.print("Director: ");
-                        movies.get(index).setDirector(input.nextLine());
-                        System.out.print("Genre: ");
-                        movies.get(index).setGenre(input.nextLine());
-                        System.out.print("Rating: ");
-                        movies.get(index).setRating(input.nextLine());
-                        System.out.print("Language: ");
-                        movies.get(index).setLanguage(input.nextLine());
-                        System.out.print("Type: ");
-                        movies.get(index).setType(input.nextLine());
-                        //Ask for the releaseDate until is a valid date
-                        while(true){
-                            System.out.print("Release Date: ");
-                            movies.get(index).setReleaseDate(input.nextLine());
-                            //Validate if releaseDate is in the format yyyy-mm-dd
-                            if(checkDate(movies.get(index).getReleaseDate()))   
-                                break;
-                        }
-                        //Validate if duration is just a number without decimals
-                        while(true){
-                            try{
-                                System.out.print("Duration: ");
-                                movies.get(index).setDuration(input.nextInt());
-                                break;
-                            }catch(Exception e){
-                                //Display an error message
-                                System.out.println("Only numbers without decimal allowed, try again");
-                                input.next();
-                            }
-                        }
-                        //Validate if price is just a number 
-                        while(true){
-                            try{
-                                System.out.print("Price: ");
-                                movies.get(index).setPrice(input.nextDouble());
-                                break;
-                            }catch(Exception e){
-                                //Display an error message
-                                System.out.println("Only numbers allowed, try again");
-                                input.next();
-                            }
-                        }
-                        //Reset input scanner
-                        input.nextLine();
-                        //Display success message
-                        System.out.println("Movie Modified");
-                    }
-                }
-                index++;
-            }
-            if(!found)
-                System.out.println("Movie not found");  //Display Movie not in the list
-        }
-        else    //List has no object
-            System.out.println("List of Movies is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();  
+        if(movieList.getCount() > 0){                    // Check if movieList is not empty
+            String title = askTitle();                      // Ask for a title to user
+            if(movieList.findMovieByTitle(title) < 0)       // If title doesn't exist in movieList
+                System.out.println("Title not found");      
+            else
+                // Display message if the object was added or there was an error
+                System.out.println(movieList.updateMovie(title, askMovie(title)) ? "Movie Changed" : "Error updating");
+        } else
+            System.out.println("List is Empty");
+        waitUser();
     }
     
-    //Display a movie or all the objects from the list movies
+    // Display movie with search criteria Director or Genre
+    public void searchMovie(){
+        Scanner input = new Scanner(System.in);     // Scanner input
+        String searchOption;                        // Choose which type of search 
+        String searchCriteria;                      // Type what to search
+        
+        // Choose between Director search or Genre search
+        if(movieList.getCount() > 0)                // If movieList is not empty
+            while(true){    // While the user choose an invalid option
+                System.out.println("Choose criteria searching\n1. Director\n2. Genre");
+                searchOption = input.nextLine();                // User choice
+                if(searchOption.compareTo("1") == 0){           // Director Search
+                    System.out.print("Enter Director: ");
+                    searchCriteria = input.nextLine();          // Which Director to Search
+                    if(!movieList.displayMovieByDirector(searchCriteria)) // Search
+                        System.out.println("Director not found"); // Search failed
+                    break;
+                } else if(searchOption.compareTo("2") == 0){    // Genre Search
+                    System.out.print("Enter Genre: ");      
+                    searchCriteria = input.nextLine();          // Which Director to Search
+                    if(!movieList.displayMovieByGenre(searchCriteria)) // Search
+                        System.out.println("Genre not found");  // Search failed
+                    break;
+                } else 
+                    System.out.println("Invalid option");       // Not a valid option  
+            }
+        else
+            System.out.println("List is empty");
+        waitUser();
+    }
+    
+    // Display an movie or all the objects from the movieList
     public void displayMovie(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!movies.isEmpty()){
-            String title;
-            boolean found = false;
-            //Display message to ask display one movie with a title seach or all movies in the list movie
-            System.out.println("Type title to search or press [Enter] for all movies");
-            title = input.nextLine();
-            //Check the user choosen option
-            if(title.compareTo("") != 0){
-                //Search title in object by object in the movie list
-                for(Movie movie: movies){
-                    //Compare user input title and the title in the current object
-                    if(movie.getTitle().compareToIgnoreCase(title) == 0){
-                        found = true;   //Movie found
-                        movie.displayMovie();   //Display Movie found
-                    }
-                }
-                if(!found)
-                    System.out.println("Movie not found");  //Display Movie not in the list
-            }
-            else                    //Second option
-                //Display all movie object in the list
-                movies.forEach((movie) -> {
-                    movie.displayMovie();
-                });
-        }
-        else    //List has no object
-            System.out.println("List of Movies is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();
-    }
-    
-    //Search by title if it exist in the movies list 
-    public boolean searchMovie(String title){
-        return movies.stream().anyMatch((movie) 
-                -> (movie.getTitle().compareToIgnoreCase(title) == 0));
+        if(movieList.getCount() > 0)             // Check if movieList is not empty
+            movieList.displayMovieList();
+        else 
+            System.out.println("List is Empty");
+        waitUser();
     }
     
     //Create a new object VideoGame to add to the list videoGames with user inputs
