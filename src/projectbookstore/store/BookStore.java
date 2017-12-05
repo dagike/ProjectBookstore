@@ -23,7 +23,7 @@ public class BookStore {
     private final GameConsoleDB gameConsoleList;
     private final GiftCardDB giftCardList;
     private final MovieDB movieList;
-    private final List<VideoGame> videoGames;
+    private final VideoGameDB videoGameList;
     
     // Methods
     
@@ -34,7 +34,17 @@ public class BookStore {
         gameConsoleList = new GameConsoleDB();
         giftCardList = new GiftCardDB();
         movieList = new MovieDB();
-        videoGames = new ArrayList();
+        videoGameList = new VideoGameDB();
+    }
+    
+    // Constructor with variable capacity
+    public BookStore(int capacity){
+        albumList = new AlbumDB(capacity);
+        bookList = new BookDB(capacity);
+        gameConsoleList = new GameConsoleDB(capacity);
+        giftCardList = new GiftCardDB(capacity);
+        movieList = new MovieDB(capacity);
+        videoGameList = new VideoGameDB(capacity);
     }
        
     // Ask for an album and return as a Album object
@@ -554,7 +564,7 @@ public class BookStore {
         waitUser();
     }
 
-    // Display giftCard with search criteria Artist or Genre
+    // Display giftCard with search criteria Company or Genre
     public void searchGiftCard(){
         Scanner input = new Scanner(System.in);     // Scanner input
         String searchOption;                        // Choose which type of search 
@@ -629,6 +639,7 @@ public class BookStore {
         while(true){
             try{
                 System.out.print("Duration: ");
+                movie.setDuration(input.nextInt());
                 if(movie.getDuration() > 0)               // Check duration is not negative
                     break;
                 else
@@ -643,6 +654,7 @@ public class BookStore {
         while(true){
             try{
                 System.out.print("Price: ");
+                movie.setPrice(input.nextDouble());
                 if(movie.getPrice() > 0)                 // Check price is not negative
                     break;
                 else
@@ -733,214 +745,137 @@ public class BookStore {
         waitUser();
     }
     
-    //Create a new object VideoGame to add to the list videoGames with user inputs
-    public void addVideoGame(){
+    //Create a new object VideoGame with user inputs
+    public VideoGame askVideoGame(String title){
         //new VideoGame object
         VideoGame videoGame = new VideoGame();
+        // int Array for date {year, month, day}
+        int intDate[] = {0, 0, 0};
         //Scanner object for user input
         Scanner input = new Scanner(System.in);
                 
-        //Display message for the object videoGame fields
-        System.out.print("Title: ");
-        //Search if name already exist in another object in the videoGames list
-        videoGame.setTitle(input.nextLine());
-        if(searchVideoGame(videoGame.getTitle()))
-            System.out.println("Title already exists"); //Title must be unique in each Video Game
-        else{
-            //Ask for all the other fields
-            System.out.print("Genre: ");
-            videoGame.setGenre(input.nextLine());
-            System.out.print("Console: ");
-            videoGame.setConsole(input.nextLine());
-            System.out.print("Publisher: ");
-            videoGame.setPublisher(input.nextLine());
-            System.out.print("Developer: ");
-            videoGame.setDeveloper(input.nextLine());
-            System.out.print("Language: ");
-            videoGame.setLanguage(input.nextLine());
-            //Ask for the releaseDate until is a valid date
-            while(true){
-                System.out.print("Release Date: ");
-                videoGame.setReleaseDate(input.nextLine());
-                //Validate if releaseDate is in the format yyyy-mm-dd
-                if(checkDate(videoGame.getReleaseDate()))   
-                    break;
+        videoGame.setTitle(title);
+        //Ask for all the other fields
+        System.out.print("Genre: ");
+        videoGame.setGenre(input.nextLine());
+        System.out.print("Console: ");
+        videoGame.setConsole(input.nextLine());
+        System.out.print("Publisher: ");
+        videoGame.setPublisher(input.nextLine());
+        System.out.print("Developer: ");
+        videoGame.setDeveloper(input.nextLine());
+        System.out.print("Language: ");
+        videoGame.setLanguage(input.nextLine());
+        //Ask for the releaseDate until is a valid date
+        //Ask for the releaseDate until is a valid date
+        while(true){
+            System.out.print("Release Date: ");
+            String date = input.nextLine();
+            if(checkDate(date, intDate)){           // Check date string
+                                 // ( year,      month       day) changed by checkDate method
+                videoGame.setReleaseDate(intDate[0], intDate[1], intDate[2]); 
+                break;
             }
-            //Validate if price is just a number
-            while(true){
-                try{
-                    System.out.print("Price: ");
-                    videoGame.setPrice(input.nextDouble());
-                    break;
-                }catch(Exception e){
-                    //Display error message
-                    System.out.println("Only numbers allowed, try again");
-                    input.next();
-                }
-            }
-            //Add the object with all the inputs to the list videoGames
-            videoGames.add(videoGame);
-            //Display success message
-            System.out.println("New Video Game Added");
         }
-        
-        System.out.println("Please press [Enter] to continue");
-        input.nextLine();
+        //Validate if price is just a number
+        while(true){
+            try{
+                System.out.print("Price: ");
+                videoGame.setPrice(input.nextDouble());
+                if(videoGame.getPrice() > 0)        // Check price is not negative
+                    break;
+                else
+                    System.out.println("Only positive numbers");
+            }catch(Exception e){
+                //Display error message
+                System.out.println("Only numbers allowed, try again");
+                input.next();
+            }
+        }
+        return videoGame;
     }
     
-    //Delete a video game from the list videoGames by searching the name
+    // Add a videoGame to videoGameList 
+    public void addVideoGame(){
+        String title = askTitle();                            // Ask for a name to user
+        if(videoGameList.findVideoGameByTitle(title) >= 0)    // If name already exist in videoGameList
+            System.out.println("Name already exists");      // Name must be unique
+        else
+            // Display message if the object was added or list is Full
+            System.out.println(videoGameList.addVideoGame(askVideoGame(title)) ? "New VideoGame Added" : "VideoGame List Full");
+        waitUser();        
+    }
+
+    // Delete a videoGame from the videoGameList by searching the name 
     public void deleteVideoGame(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!videoGames.isEmpty()){
-            int index = 0;  //Used for the loop to get object by object in the list
-            String name;   //Search string input by user
-            boolean found = false;  //Check if videoGame was found
-            //Display message to ask name to the user they want to delete
-            System.out.print("Which Video Game do you want to delete?\nEnter name: ");
-            name = input.nextLine();   //User input name
-            
-            //Search for the name input by the user
-            while(index < videoGames.size() && !found){
-                //Compare the name with the videoGame object name
-                if(videoGames.get(index).getTitle().compareToIgnoreCase(name) == 0){
-                    found = true;   //Title found in the list
-                    videoGames.get(index).displayVideoGame();   //Display videoGame with the name
-                    System.out.println("Are you sure? (y/n)");  //User decide to delete
-                    //Delete if the user say "y"
-                    if(input.nextLine().compareToIgnoreCase("y") == 0){
-                        videoGames.remove(index);   //Remove videoGame from list
-                        System.out.println("Video Game Deleted");    //Display message success
-                    }
-                }
-                index++;    //increase index for next object in list
-            }
-            if(!found)
-                System.out.println("Video Game not found"); //Display VideoGame not found in the list
-        }
-        else    //List has no object
-            System.out.println("List of Video Games is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();
+        if(videoGameList.getCount() > 0){                   // Check if videoGameList is not empty
+            String name = askName();                        // Ask for a name to user
+            // Display message if the object was deleted or name was not found
+            System.out.println(videoGameList.deleteVideoGame(name) ? "VideoGame Deleted" : "Name not found");
+        } else 
+            System.out.println("List is Empty");
+        waitUser();
     }
-    
-    //Modify a video game from the list videoGames by searching the name
+
+    // Modify a videoGame from the videoGameList by searching the name
     public void modifyVideoGame(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!videoGames.isEmpty()){
-            int index = 0;  //Used for the loop to get object by object in the list
-            String name;   //Search string input by user
-            boolean found = false;  //Check if videoGame was found
-            //Ask for the name of the videoGame to modify in the videoGames list
-            System.out.print("Which Video Game you want to modify?\n Enter name: ");
-            name = input.nextLine();
-            //Search for the name until is found
-            while(index < videoGames.size() && !found){
-                if(videoGames.get(index).getTitle().compareToIgnoreCase(name) == 0){
-                    found = true;
-                    videoGames.get(index).displayVideoGame();   //Display found videoGame
-                    System.out.println("Are you sure? (y/n)");  //Ask the user to confirm to modify found videoGame
-                    //Ask again for the fields if the user say [y]es
-                    if(input.nextLine().compareToIgnoreCase("y") == 0){
-                        System.out.print("Genre: ");
-                        videoGames.get(index).setGenre(input.nextLine());
-                        System.out.print("Console: ");
-                        videoGames.get(index).setConsole(input.nextLine());
-                        System.out.print("Publisher: ");
-                        videoGames.get(index).setPublisher(input.nextLine());
-                        System.out.print("Developer: ");
-                        videoGames.get(index).setDeveloper(input.nextLine());
-                        System.out.print("Language: ");
-                        videoGames.get(index).setLanguage(input.nextLine());
-                        //Ask for the releaseDate until is a valid date
-                        while(true){
-                            System.out.print("Release Date: ");
-                            videoGames.get(index).setReleaseDate(input.nextLine());
-                            //Validate if releaseDate is in the format yyyy-mm-dd
-                            if(checkDate(videoGames.get(index).getReleaseDate()))   
-                                break;
-                        }
-                        //Validate if price is just a number
-                        while(true){
-                            try{
-                                System.out.print("Price: ");
-                                videoGames.get(index).setPrice(input.nextDouble());
-                                break;
-                            }catch(Exception e){
-                                //Display error message
-                                System.out.println("Only numbers allowed, try again");
-                                input.next();
-                            }
-                        }
-                        //Reset input scanner
-                        input.nextLine();
-                        //Display success message
-                        System.out.println("Video Game Modified");
-                    }
-                }
-                index++;
-            }
-            if(!found)
-                System.out.println("Video Game not found");  //Display VideoGame not in the list
-        }
-        else    //List has no object
-            System.out.println("List of Video Games is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();  
+        if(videoGameList.getCount() > 0){                     // Check if videoGameList is not empty
+            String title = askTitle();                        // Ask for a name to user
+            if(videoGameList.findVideoGameByTitle(title) < 0) // If name doesn't exist in videoGameList
+                System.out.println("Name not found");      
+            else
+                // Display message if the object was added or there was an error
+                System.out.println(videoGameList.updateVideoGame(title, askVideoGame(title)) ? "VideoGame Changed" : "Error updating");
+        } else
+            System.out.println("List is Empty");
+        waitUser();
     }
-    
-    //Display a video game or all objects from the list videoGames
+
+    // Display videoGame with search criteria Artist or Genre
+    public void searchVideoGame(){
+        Scanner input = new Scanner(System.in);     // Scanner input
+        String searchOption;                        // Choose which type of search 
+        String searchCriteria;                      // Type what to search
+
+        // Choose between Developer search or Genre search or Console search
+        if(videoGameList.getCount() > 0)                          // If videoGameList is not empty
+            while(true){    // While the user choose an invalid option
+                System.out.println("Choose criteria searching\n1. Developer\n2. Genre\n3. Console");
+                searchOption = input.nextLine();                  // User choice
+                if(searchOption.compareTo("1") == 0){             // Company Search
+                    System.out.print("Enter Developer: ");
+                    searchCriteria = input.nextLine();            // Which Developer to Search
+                    if(!videoGameList.displayVideoGameByDeveloper(searchCriteria)) // Search
+                        System.out.println("Developer not found");// Search failed
+                    break;
+                } else if(searchOption.compareTo("2") == 0){      // Region Search
+                    System.out.print("Enter Genre: ");      
+                    searchCriteria = input.nextLine();            // Which Genre to Search
+                    if(!videoGameList.displayVideoGameByGenre(searchCriteria)) // Search
+                        System.out.println("Genre not found");    // Search failed
+                    break;
+                } else if(searchOption.compareTo("3") == 0){      // Region Search
+                    System.out.print("Enter Console: ");      
+                    searchCriteria = input.nextLine();            // Which Console to Search
+                    if(!videoGameList.displayVideoGameByConsole(searchCriteria)) // Search
+                        System.out.println("Console not found");  // Search failed
+                    break;
+                } else 
+                    System.out.println("Invalid option");         // Not a valid option  
+            }
+        else
+            System.out.println("List is empty");
+        waitUser();
+    }
+
+    // Display a videoGame or all the objects from the videoGameList
     public void displayVideoGame(){
-        //Scanner object for user input
-        Scanner input = new Scanner(System.in);
-        //Check if the list not empty
-        if(!videoGames.isEmpty()){
-            String name;
-            boolean found = false;
-            //Display message to ask display one videoGame with a name seach or all videoGames in the list videoGame
-            System.out.println("Type name to search or press [Enter] for all Video Games");
-            name = input.nextLine();
-            //Check the user choosen option
-            if(name.compareTo("") != 0){
-                //Search name in object by object in the videoGame list
-                for(VideoGame videoGame: videoGames){
-                    //Compare user input name and the name in the current object
-                    if(videoGame.getTitle().compareToIgnoreCase(name) == 0){
-                        found = true;   //VideoGame found
-                        videoGame.displayVideoGame();   //Display VideoGame found
-                    }
-                }
-                if(!found)
-                    System.out.println("Video Game not found");  //Display VideoGame not in the list
-            }
-            else                    //Second option
-                //Display all videoGame object in the list
-                videoGames.forEach((videoGame) -> {
-                    videoGame.displayVideoGame();
-                });
-        }
-        else    //List has no object
-            System.out.println("List of Video Games is empty");  
-        //Display message Enter to continue
-        System.out.println("Please press [Enter] to continue");
-        //Wait for the user to read all the messages before this
-        input.nextLine();
+        if(videoGameList.getCount() > 0)             // Check if videoGameList is not empty
+            videoGameList.displayVideoGameList();
+        else 
+            System.out.println("List is Empty");
+        waitUser();
     }
-    
-    //Search by name if it exist in the videoGames list 
-    public boolean searchVideoGame(String name){
-        return videoGames.stream().anyMatch((videoGame) 
-                -> (videoGame.getTitle().compareToIgnoreCase(name) == 0));
-    }
-    
-    
     
     // Wait for user enter
     public void waitUser(){        

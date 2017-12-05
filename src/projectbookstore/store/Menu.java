@@ -180,10 +180,10 @@ public class Menu {
                                 bookStore.searchGiftCard();         // Search Gift Card
                                 break;
                         case 5:System.out.println("Movies");
-                                //bookStore.searchMovie();            // Search Movie
+                                bookStore.searchMovie();            // Search Movie
                                 break;
                         case 6:System.out.println("Video Games");
-                                //bookStore.searchVideoGame();        // Search Video Game
+                                bookStore.searchVideoGame();        // Search Video Game
                     }
                     break;
                     // Exit the option menu back to category menu no action made
