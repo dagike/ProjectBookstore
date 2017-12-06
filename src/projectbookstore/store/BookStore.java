@@ -12,8 +12,6 @@ package projectbookstore.store;
 // Import java libraries and other libraries
 import projectbookstore.store.products.*;   // Product Classes
 import projectbookstore.store.db.*;         // DB Classes
-import java.util.List;                      // List object
-import java.util.ArrayList;                 // ArrayList object
 import java.util.Scanner;                   // Scanner object
 
 public class BookStore {
@@ -893,24 +891,6 @@ public class BookStore {
     public String askName(){
         System.out.print("Name: ");
         return new Scanner(System.in).nextLine();
-    }
-    
-    //Check if the date is a valid format yyyy-mm-dd
-    public boolean checkDate(String date){
-        if(date.length() != 10){
-            //Display error message string date has to have 10 characters
-            System.out.println("Must be 10 characters");
-            return false;
-        //Check for format and check for months with 29, 30 or 31 days
-        }else if(!date.matches("\\d{4}-"
-                + "(((01|03|05|07|08|10|12)-(0[1-9]|1[0-9]|2[0-9]|3[0-1]))|"  //Months with up to 31 days
-                + "((04|06|09|11)-(0[1-9]|1[0-9]|2[0-9]|30))|"                //Months Valid only up to 30 days
-                + "((02)-(0[1-9]|1[0-9]|2[0-9])))" + "$")){                   //February up to 29 days
-            //Display error message invalid format or wrong number of days
-            System.out.println("Check format yyyy-mm-dd and valid month-day number");
-            return false;
-        }else
-            return true;
     }
     
     //Check if the date is a valid format yyyy-mm-dd and assign in an array of int
