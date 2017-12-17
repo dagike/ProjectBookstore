@@ -9,17 +9,16 @@
 // Current package
 package projectbookstore.store.products;
 
-public class Book {
+public class Book extends Product{
     // Attributes
-    private String title, author, genre, publisher, language, ISBN;
+    private String author, genre, publisher, language, ISBN;
     private int pages, publicationYear;
-    private double price;
 
     // Methods
     
     // Constructor
     public Book() {
-        title = "";
+        super();
         author = "";
         genre = "";
         publisher = "";
@@ -27,17 +26,6 @@ public class Book {
         language = "";
         ISBN = "";
         pages = 0;
-        price = 0.0;
-    }
-
-    // Accesor for title
-    public String getTitle() {
-        return title;
-    }
-
-    // Mutator for title
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     // Accesor for author
@@ -111,28 +99,18 @@ public class Book {
         if(pages > 0)
             this.pages = pages;
     }
-
-    // Accesor for price
-    public double getPrice() {
-        return price;
-    }
-
-    // Mutator for price
-    public void setPrice(double price) {
-        if(price >= 0)
-            this.price = price;
-    }
     
-    // Display all the fields of the object
-    public void displayBook(){
-        System.out.println( "Title: " + title +
-                            "\nAuthor: " + author +
-                            "\nGenre: " + genre +
-                            "\nPublisher: " + publisher +
-                            "\nPublication Year: " + publicationYear +
-                            "\nLanguage: " + language +
-                            "\nISBN: " + ISBN +
-                            "\nPages: " + pages +
-                            "\nPrice: $" + price + "\n" );
+    @Override
+    // Override toString to format a Strirng with fields of the object
+    public String toString(){
+        return "Title: " + super.getTitle() +
+               "\nAuthor: " + author +
+               "\nGenre: " + genre +
+               "\nPublisher: " + publisher +
+               "\nPublication Year: " + publicationYear +
+               "\nLanguage: " + language +
+               "\nISBN: " + ISBN +
+               "\nPages: " + pages +
+               "\nPrice: $" + super.getPrice() + "\n";
     }
 }

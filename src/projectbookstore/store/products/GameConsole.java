@@ -14,12 +14,12 @@ import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Calendar;
 
-public class GameConsole {
+public class GameConsole extends Product{
     //Attributes
-    private String name, company; 
+    private String company; 
     private Calendar releaseDate;
     private int memory;
-    private double weight, price;
+    private double weight;
     // Formatter for dates
     private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -27,22 +27,11 @@ public class GameConsole {
     
     //Constructor
     public GameConsole() {
-        name = "";
+        super();
         company = "";
         releaseDate = new GregorianCalendar(1900, 0, 1); // Set Date to 1900-01-01
         memory = 0;
         weight = 0.0;
-        price = 0.0;
-    }
-
-    //Accesor for name
-    public String getName() {
-        return name;
-    }
-
-    //Mutator for name
-    public void setName(String name) {
-        this.name = name;
     }
 
     //Accesor for company
@@ -92,26 +81,16 @@ public class GameConsole {
         if(weight > 0)
             this.weight = weight;
     }
-
-    //Accesor for price
-    public double getPrice() {
-        return price;
-    }
-
-    //Mutator for price
-    public void setPrice(double price) {
-        if(price > 0)
-            this.price = price;
-    }
     
-    //Display all the fields of the object
-    public void displayGameConsole(){
-        System.out.println( "Name: " + name +
-                            "\nCompany: " + company +
-                            "\nRelease Date: " + 
-                            date.format(releaseDate.getTime()) +    // Using date formatter to display as yyyy-MM-dd
-                            "\nMemory: " + memory +
-                            " Gb\nWeight: " + weight +
-                            " Kg.\nPrice: $" + price + "\n" );
+    @Override
+    // Override toString to format a Strirng with fields of the object
+    public String toString(){
+        return "Title: " + super.getTitle() +
+               "\nCompany: " + company +
+               "\nRelease Date: " + 
+               date.format(releaseDate.getTime()) +    // Using date formatter to display as yyyy-MM-dd
+               "\nMemory: " + memory +
+               " Gb\nWeight: " + weight +
+               " Kg.\nPrice: $" + super.getPrice() + "\n";
     }
 }

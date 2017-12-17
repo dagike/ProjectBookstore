@@ -69,11 +69,11 @@ public class Menu {
             case "6":this.category = 6;     // Video Games category
                      break;
                     // Exit display end message
-            case "7":System.out.println(" -----------------------------");
-                     System.out.println("|                             |");
-                     System.out.println("|          GoodBye!!          |");
-                     System.out.println("|                             |");
-                     System.out.println(" -----------------------------");
+            case "7":System.out.println(" ---------------------------");
+                     System.out.println("|                           |");
+                     System.out.println("|         GoodBye!!         |");
+                     System.out.println("|                           |");
+                     System.out.println(" ---------------------------");
                      this.category = 7;
                      break;
                     // Error message if its not if the category is not available

@@ -108,11 +108,11 @@ public class BookStore {
     // Add an album to albumList 
     public void addAlbum(){
         String title = askTitle();                      // Ask for a title to user
-        if(albumList.findAlbumByTitle(title) >= 0)      // If title already exist in albumList
+        if(albumList.findProductByTitle(title) >= 0)      // If title already exist in albumList
             System.out.println("Title already exists"); // Title must be unique
         else
             // Display message if the object was added or list is Full
-            System.out.println(albumList.addAlbum(askAlbum(title)) ? "New Album Added" : "Album List Full");
+            System.out.println(albumList.addProduct(askAlbum(title)) ? "New Album Added" : "Album List Full");
         waitUser();        
     }
     
@@ -121,7 +121,7 @@ public class BookStore {
         if(albumList.getCount() > 0){                        // Check if albumList is not empty
             String title = askTitle();                      // Ask for a title to user
             // Display message if the object was deleted or title was not found
-            System.out.println(albumList.deleteAlbum(title) ? "Album Deleted" : "Title not found");
+            System.out.println(albumList.deleteProduct(title) ? "Album Deleted" : "Title not found");
         } else
             System.out.println("List is Empty");
         waitUser();
@@ -131,11 +131,11 @@ public class BookStore {
     public void modifyAlbum(){
         if(albumList.getCount() > 0){                    // Check if albumList is not empty
             String title = askTitle();                      // Ask for a title to user
-            if(albumList.findAlbumByTitle(title) < 0)       // If title doesn't exist in albumList
+            if(albumList.findProductByTitle(title) < 0)       // If title doesn't exist in albumList
                 System.out.println("Title not found");      
             else
                 // Display message if the object was added or there was an error
-                System.out.println(albumList.updateAlbum(title, askAlbum(title)) ? "Album Changed" : "Error updating");
+                System.out.println(albumList.updateProduct(title, askAlbum(title)) ? "Album Changed" : "Error updating");
         } else
             System.out.println("List is Empty");
         waitUser();
@@ -175,7 +175,7 @@ public class BookStore {
     // Display an album or all the objects from the albumList
     public void displayAlbum(){
         if(albumList.getCount() > 0)             // Check if albumList is not empty
-            albumList.displayAlbumList();
+            albumList.displayProductList();
         else 
             System.out.println("List is Empty");
         waitUser();
@@ -252,11 +252,11 @@ public class BookStore {
     // Add a book to bookList
     public void addBook(){
         String title = askTitle();                      // Ask for a title to user
-        if(bookList.findBookByTitle(title) >= 0)        // If title already exist in bookList
+        if(bookList.findProductByTitle(title) >= 0)        // If title already exist in bookList
             System.out.println("Title already exists"); // Title must be unique
         else
             // Display message if the object was added or list is Full
-            System.out.println(bookList.addBook(askBook(title)) ? "New Book Added" : "Book List Full");
+            System.out.println(bookList.addProduct(askBook(title)) ? "New Book Added" : "Book List Full");
         waitUser();        
     }
     
@@ -265,7 +265,7 @@ public class BookStore {
         if(bookList.getCount() > 0){                    // Check if bookList is not empty
             String title = askTitle();                  // Ask for a title to user
             // Display message if the object was deleted or title was not found
-            System.out.println(bookList.deleteBook(title) ? "Book Deleted" : "Title not found");
+            System.out.println(bookList.deleteProduct(title) ? "Book Deleted" : "Title not found");
         } else
             System.out.println("List is Empty");
         waitUser();
@@ -275,11 +275,11 @@ public class BookStore {
     public void modifyBook(){
         if(bookList.getCount() > 0){                    // Check if bookList is not empty
             String title = askTitle();                  // Ask for a title to user
-            if(albumList.findAlbumByTitle(title) < 0)   // If title doesn't exist in bookList
+            if(bookList.findProductByTitle(title) < 0)   // If title doesn't exist in bookList
                 System.out.println("Title not found");      
             else
                 // Display message if the object was added or there was an error
-                System.out.println(bookList.updateBook(title, askBook(title)) ? "Album Changed" : "Error updating");
+                System.out.println(bookList.updateProduct(title, askBook(title)) ? "Book Changed" : "Error updating");
         } else 
             System.out.println("List is Empty"); 
         waitUser();
@@ -292,19 +292,19 @@ public class BookStore {
         String searchCriteria;                          // Type what to search
         
         // Choose between Artist search or Genre search
-        if(albumList.getCount() > 0)                    // If albumList is not empty
+        if(bookList.getCount() > 0)                    // If albumList is not empty
             while(true){    // While the user choose an invalid option
                 System.out.println("Choose criteria searching\n1. Author\n2. Genre");
                 searchOption = input.nextLine();                // User choice
                 if(searchOption.compareTo("1") == 0){           // Author Search
-                    System.out.print("Enter Artist: ");
+                    System.out.print("Enter Author: ");
                     searchCriteria = input.nextLine();          // Which Author to Search
                     if(!bookList.displayBookByAuthor(searchCriteria)) // Search
-                        System.out.println("Artist not found"); // Search failed
+                        System.out.println("Author not found"); // Search failed
                     break;
                 } else if(searchOption.compareTo("2") == 0){    // Genre Search
                     System.out.print("Enter Genre: ");      
-                    searchCriteria = input.nextLine();          // Which Artist to Search
+                    searchCriteria = input.nextLine();          // Which Genre to Search
                     if(!bookList.displayBookByGenre(searchCriteria)) // Search
                         System.out.println("Genre not found");  // Search failed
                     break;
@@ -319,7 +319,7 @@ public class BookStore {
     // Display a book or all the objects from the bookList
     public void displayBook(){
         if(bookList.getCount() > 0)                       // Check if bookList is not empty
-            bookList.displayBookList();
+            bookList.displayProductList();
         else
             System.out.println("List is Empty");
         waitUser();
@@ -334,7 +334,7 @@ public class BookStore {
         // int Array for date {year, month, day}
         int intDate[] = {0, 0, 0};
         
-        gameConsole.setName(title);
+        gameConsole.setTitle(title);
 
         //Ask for all the other fields
         System.out.print("Company: ");
@@ -403,21 +403,21 @@ public class BookStore {
     
     // Add a book to gameConsoleList
     public void addGameConsole(){
-        String name = askName();                            // Ask for a name to user
-        if(gameConsoleList.findGameConsoleByName(name) >= 0)// If title already exist in gameConsoleList
-            System.out.println("Name already exists");      // Name must be unique
+        String title = askTitle();                            // Ask for a title to user
+        if(gameConsoleList.findProductByTitle(title) >= 0)// If title already exist in gameConsoleList
+            System.out.println("Title already exists");      // Title must be unique
         else
             // Display message if the object was added or list is Full
-            System.out.println(gameConsoleList.addGameConsole(askGameConsole(name)) ? "New Game Console Added" : "Game Console List Full");
+            System.out.println(gameConsoleList.addProduct(askGameConsole(title)) ? "New Game Console Added" : "Game Console List Full");
         waitUser();        
     }
     
-    // Delete a Game Console from the gameConsoleList by searching the name 
+    // Delete a Game Console from the gameConsoleList by searching the title 
     public void deleteGameConsole(){
         if(gameConsoleList.getCount() > 0){                 // Check if gameConsoleList is not empty
-            String name = askName();                        // Ask for a name to user
-            // Display message if the object was deleted or name was not found
-            System.out.println(gameConsoleList.deleteGameConsole(name) ? "Game Console Deleted" : "Name not found");
+            String title = askTitle();                        // Ask for a title to user
+            // Display message if the object was deleted or title was not found
+            System.out.println(gameConsoleList.deleteProduct(title) ? "Game Console Deleted" : "Title not found");
         } else
             System.out.println("List is Empty");
         waitUser();
@@ -426,12 +426,12 @@ public class BookStore {
     // Modify a Game Console from the bookList by searching the title
     public void modifyGameConsole(){
         if(gameConsoleList.getCount() > 0){                     // Check if gameConsoleList is not empty
-            String name = askName();                            // Ask for a name to user
-            if(gameConsoleList.findGameConsoleByName(name) < 0) // If name doesn't exist in gameConsoleList
-                System.out.println("Name not found");      
+            String title = askTitle();                            // Ask for a title to user
+            if(gameConsoleList.findProductByTitle(title) < 0) // If title doesn't exist in gameConsoleList
+                System.out.println("Title not found");      
             else
                 // Display message if the object was added or there was an error
-                System.out.println(gameConsoleList.updateGameConsole(name, askGameConsole(name)) ? "Game Console Changed" : "Error updating");
+                System.out.println(gameConsoleList.updateProduct(title, askGameConsole(title)) ? "Game Console Changed" : "Error updating");
         } else 
             System.out.println("List is Empty"); 
         waitUser();
@@ -446,16 +446,10 @@ public class BookStore {
         // Choose between Artist search or Genre search
         if(gameConsoleList.getCount() > 0)                      // If gameConsoleList is not empty
             while(true){    // While the user choose an invalid option
-                System.out.println("Choose criteria searching\n1. Company\n2. Company");
+                System.out.println("Choose criteria searching\n1. Company");
                 searchOption = input.nextLine();                // User choice
                 if(searchOption.compareTo("1") == 0){           // Author Search
                     System.out.print("Enter Company: ");
-                    searchCriteria = input.nextLine();          // Which Company to Search
-                    if(!gameConsoleList.displayGameConsoleByCompany(searchCriteria)) // Search
-                        System.out.println("Company not found");// Search failed
-                    break;
-                } else if(searchOption.compareTo("2") == 0){    // Genre Search
-                    System.out.print("Enter Company: ");      
                     searchCriteria = input.nextLine();          // Which Company to Search
                     if(!gameConsoleList.displayGameConsoleByCompany(searchCriteria)) // Search
                         System.out.println("Company not found");// Search failed
@@ -471,7 +465,7 @@ public class BookStore {
     // Display a Game Console or all the objects from the bookList
     public void displayGameConsole(){
         if(gameConsoleList.getCount() > 0)                      // Check if gameConsoleList is not empty
-            gameConsoleList.displayGameConsoleList();
+            gameConsoleList.displayProductList();
         else
             System.out.println("List is Empty");
         waitUser();
@@ -484,7 +478,7 @@ public class BookStore {
         //Scanner object for user input
         Scanner input = new Scanner(System.in);
                 
-        giftCard.setName(title);
+        giftCard.setTitle(title);
         //Ask for all the other fields
         System.out.print("Company: ");
         giftCard.setCompany(input.nextLine());
@@ -528,35 +522,35 @@ public class BookStore {
     
     // Add a giftCard to giftCardList 
     public void addGiftCard(){
-        String name = askName();                            // Ask for a name to user
-        if(giftCardList.findGiftCardByName(name) >= 0)      // If name already exist in giftCardList
-            System.out.println("Name already exists");      // Name must be unique
+        String title = askTitle();                            // Ask for a title to user
+        if(giftCardList.findProductByTitle(title) >= 0)      // If title already exist in giftCardList
+            System.out.println("Title already exists");      // Title must be unique
         else
             // Display message if the object was added or list is Full
-            System.out.println(giftCardList.addGiftCard(askGiftCard(name)) ? "New GiftCard Added" : "GiftCard List Full");
+            System.out.println(giftCardList.addProduct(askGiftCard(title)) ? "New GiftCard Added" : "GiftCard List Full");
         waitUser();        
     }
 
-    // Delete a giftCard from the giftCardList by searching the name 
+    // Delete a giftCard from the giftCardList by searching the title 
     public void deleteGiftCard(){
         if(giftCardList.getCount() > 0){                  // Check if giftCardList is not empty
-            String name = askName();                      // Ask for a name to user
-            // Display message if the object was deleted or name was not found
-            System.out.println(giftCardList.deleteGiftCard(name) ? "GiftCard Deleted" : "Name not found");
+            String title = askTitle();                      // Ask for a title to user
+            // Display message if the object was deleted or title was not found
+            System.out.println(giftCardList.deleteProduct(title) ? "GiftCard Deleted" : "Title not found");
         } else 
             System.out.println("List is Empty");
         waitUser();
     }
 
-    // Modify a giftCard from the giftCardList by searching the name
+    // Modify a giftCard from the giftCardList by searching the title
     public void modifyGiftCard(){
         if(giftCardList.getCount() > 0){                    // Check if giftCardList is not empty
-            String name = askName();                        // Ask for a name to user
-            if(giftCardList.findGiftCardByName(name) < 0)   // If name doesn't exist in giftCardList
-                System.out.println("Name not found");      
+            String title = askTitle();                        // Ask for a title to user
+            if(giftCardList.findProductByTitle(title) < 0)   // If title doesn't exist in giftCardList
+                System.out.println("Title not found");      
             else
                 // Display message if the object was added or there was an error
-                System.out.println(giftCardList.updateGiftCard(name, askGiftCard(name)) ? "GiftCard Changed" : "Error updating");
+                System.out.println(giftCardList.updateProduct(title, askGiftCard(title)) ? "GiftCard Changed" : "Error updating");
         } else
             System.out.println("List is Empty");
         waitUser();
@@ -596,7 +590,7 @@ public class BookStore {
     // Display a giftCard or all the objects from the giftCardList
     public void displayGiftCard(){
         if(giftCardList.getCount() > 0)             // Check if giftCardList is not empty
-            giftCardList.displayGiftCardList();
+            giftCardList.displayProductList();
         else 
             System.out.println("List is Empty");
         waitUser();
@@ -670,11 +664,11 @@ public class BookStore {
         // Add an movie to movieList 
     public void addMovie(){
         String title = askTitle();                      // Ask for a title to user
-        if(movieList.findMovieByTitle(title) >= 0)      // If title already exist in movieList
+        if(movieList.findProductByTitle(title) >= 0)      // If title already exist in movieList
             System.out.println("Title already exists"); // Title must be unique
         else
             // Display message if the object was added or list is Full
-            System.out.println(movieList.addMovie(askMovie(title)) ? "New Movie Added" : "Movie List Full");
+            System.out.println(movieList.addProduct(askMovie(title)) ? "New Movie Added" : "Movie List Full");
         waitUser();        
     }
     
@@ -683,7 +677,7 @@ public class BookStore {
         if(movieList.getCount() > 0){                        // Check if movieList is not empty
             String title = askTitle();                      // Ask for a title to user
             // Display message if the object was deleted or title was not found
-            System.out.println(movieList.deleteMovie(title) ? "Movie Deleted" : "Title not found");
+            System.out.println(movieList.deleteProduct(title) ? "Movie Deleted" : "Title not found");
         } else
             System.out.println("List is Empty");
         waitUser();
@@ -693,11 +687,11 @@ public class BookStore {
     public void modifyMovie(){
         if(movieList.getCount() > 0){                    // Check if movieList is not empty
             String title = askTitle();                      // Ask for a title to user
-            if(movieList.findMovieByTitle(title) < 0)       // If title doesn't exist in movieList
+            if(movieList.findProductByTitle(title) < 0)       // If title doesn't exist in movieList
                 System.out.println("Title not found");      
             else
                 // Display message if the object was added or there was an error
-                System.out.println(movieList.updateMovie(title, askMovie(title)) ? "Movie Changed" : "Error updating");
+                System.out.println(movieList.updateProduct(title, askMovie(title)) ? "Movie Changed" : "Error updating");
         } else
             System.out.println("List is Empty");
         waitUser();
@@ -737,7 +731,7 @@ public class BookStore {
     // Display an movie or all the objects from the movieList
     public void displayMovie(){
         if(movieList.getCount() > 0)             // Check if movieList is not empty
-            movieList.displayMovieList();
+            movieList.displayProductList();
         else 
             System.out.println("List is Empty");
         waitUser();
@@ -795,35 +789,35 @@ public class BookStore {
     
     // Add a videoGame to videoGameList 
     public void addVideoGame(){
-        String title = askTitle();                            // Ask for a name to user
-        if(videoGameList.findVideoGameByTitle(title) >= 0)    // If name already exist in videoGameList
-            System.out.println("Name already exists");      // Name must be unique
+        String title = askTitle();                            // Ask for a title to user
+        if(videoGameList.findProductByTitle(title) >= 0)    // If title already exist in videoGameList
+            System.out.println("Title already exists");      // Title must be unique
         else
             // Display message if the object was added or list is Full
-            System.out.println(videoGameList.addVideoGame(askVideoGame(title)) ? "New VideoGame Added" : "VideoGame List Full");
+            System.out.println(videoGameList.addProduct(askVideoGame(title)) ? "New VideoGame Added" : "VideoGame List Full");
         waitUser();        
     }
 
-    // Delete a videoGame from the videoGameList by searching the name 
+    // Delete a videoGame from the videoGameList by searching the title 
     public void deleteVideoGame(){
         if(videoGameList.getCount() > 0){                   // Check if videoGameList is not empty
-            String name = askName();                        // Ask for a name to user
-            // Display message if the object was deleted or name was not found
-            System.out.println(videoGameList.deleteVideoGame(name) ? "VideoGame Deleted" : "Name not found");
+            String title = askTitle();                        // Ask for a title to user
+            // Display message if the object was deleted or title was not found
+            System.out.println(videoGameList.deleteProduct(title) ? "VideoGame Deleted" : "Title not found");
         } else 
             System.out.println("List is Empty");
         waitUser();
     }
 
-    // Modify a videoGame from the videoGameList by searching the name
+    // Modify a videoGame from the videoGameList by searching the title
     public void modifyVideoGame(){
         if(videoGameList.getCount() > 0){                     // Check if videoGameList is not empty
-            String title = askTitle();                        // Ask for a name to user
-            if(videoGameList.findVideoGameByTitle(title) < 0) // If name doesn't exist in videoGameList
-                System.out.println("Name not found");      
+            String title = askTitle();                        // Ask for a title to user
+            if(videoGameList.findProductByTitle(title) < 0) // If title doesn't exist in videoGameList
+                System.out.println("Title not found");      
             else
                 // Display message if the object was added or there was an error
-                System.out.println(videoGameList.updateVideoGame(title, askVideoGame(title)) ? "VideoGame Changed" : "Error updating");
+                System.out.println(videoGameList.updateProduct(title, askVideoGame(title)) ? "VideoGame Changed" : "Error updating");
         } else
             System.out.println("List is Empty");
         waitUser();
@@ -869,7 +863,7 @@ public class BookStore {
     // Display a videoGame or all the objects from the videoGameList
     public void displayVideoGame(){
         if(videoGameList.getCount() > 0)             // Check if videoGameList is not empty
-            videoGameList.displayVideoGameList();
+            videoGameList.displayProductList();
         else 
             System.out.println("List is Empty");
         waitUser();
@@ -884,12 +878,6 @@ public class BookStore {
     // Ask for title
     public String askTitle(){
         System.out.print("Title: ");
-        return new Scanner(System.in).nextLine();
-    }
-    
-    // Ask for name
-    public String askName(){
-        System.out.print("Name: ");
         return new Scanner(System.in).nextLine();
     }
     

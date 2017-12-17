@@ -9,31 +9,19 @@
 //Current package
 package projectbookstore.store.products;
 
-public class GiftCard {
+public class GiftCard extends Product{
     //Attributes
-    private String name, company, region;
+    private String company, region;
     private int amount;
-    private double price;
 
     //Methods
     
     //Constructor
     public GiftCard() {
-        name = "";
+        super();
         amount = 0;
         company = "";
         region = "";
-        price = 0.0;
-    }
-
-    //Accesor for name
-    public String getName() {
-        return name;
-    }
-
-    //Mutator for name
-    public void setName(String name) {
-        this.name = name;
     }
 
     //Accesor for amount
@@ -66,24 +54,14 @@ public class GiftCard {
     public void setRegion(String region) {
         this.region = region;
     }
-
-    //Accesor for price
-    public double getPrice() {
-        return price;
-    }
-
-    //Mutator for price
-    public void setPrice(double price) {
-        if(price > 0)
-            this.price = price;
-    }
     
-    //Display all the fields of the object
-    public void displayGiftCard(){
-        System.out.println( "Name: " + name +
-                            "\nAmount: " + amount +
-                            "\nCompany: " + company +
-                            "\nRegion: " + region +
-                            "\nPrice: $" + price + "\n" );
+    @Override
+    // Override toString to format a Strirng with fields of the object
+    public String toString(){
+        return "Title: " + super.getTitle() +
+              "\nAmount: " + amount +
+              "\nCompany: " + company +
+              "\nRegion: " + region +
+              "\nPrice: $" + super.getPrice() + "\n";
     }
 }

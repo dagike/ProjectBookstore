@@ -14,12 +14,11 @@ import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Calendar;
 
-public class Movie {
+public class Movie extends Product{
     //Attributes
     private String title, director, genre, rating, language, type;
     private Calendar releaseDate;
     private int duration;
-    private double price;
     // Formatter for dates
     private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -27,6 +26,7 @@ public class Movie {
     
     //Constructor   
     public Movie(){
+        super();
         title = "";
         director = "";
         genre = "";
@@ -35,7 +35,6 @@ public class Movie {
         language = "";
         type = "";
         releaseDate = new GregorianCalendar(1900, 0, 1); // Set Date to 1900-01-01;
-        price = 0.0;
 
     }
     
@@ -125,21 +124,11 @@ public class Movie {
         if(year > 0 && month >= 0 && month <= 11 && day > 0 && day <= 31)
             this.releaseDate.set(year, month-1, day);       // Month - 1 Calendar object 0 first month
     }
-
-    //Accesor for price
-    public double getPrice() {
-        return price;
-    }
-
-    //Mutator for price
-    public void setPrice(double price) {
-        if(price > 0)
-            this.price = price;
-    }
     
-    //Display all the fields of the object
-    public void displayMovie(){
-        System.out.println( "Title: " + title +
+    @Override
+    // Override toString to format a Strirng with fields of the object
+    public String toString(){
+        return "Title: " + super.getTitle() +
                "\nDirector: " + director +
                "\nGenre: " + genre +
                "\nRating: " + rating +
@@ -148,6 +137,6 @@ public class Movie {
                "\nType: " + type +
                "\nRelease Date: " + 
                 date.format(releaseDate.getTime()) +    // Using date formatter to display as yyyy-MM-dd
-               "\nPrice: $" + price + "\n" );
+               "\nPrice: $" + super.getPrice() + "\n";
     }
 }
